@@ -2,16 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dongyang.android.boda">
 
+    <uses-permission android:name="com.dongyang.android.boda.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 권한 선언 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- WiFI 또는 모바일 데이터를 바탕으로 기기위치 파악할 수 있게 해줌 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 위치 데이터를 바탕으로 최대한 정확하게 위치를 파악할 수 있게 한다. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 구글 play-services 내부적으로 구글 서버와 연동하기 위한 퍼미션 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- play-services 라이브러리에서 구글 서버의 콘텐츠를 외부 메모리 공간에 캐싱 개념으로 저장, 사용하기 위해 필요한 퍼미션 -->
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BODA">
-        <activity android:name=".FindActivity"></activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
+        android:theme="@style/Theme.BODA"
+        android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBWkLZrAIKRiM4gwNqc0am8Jdy0ZO0OGRQ" />
+
+        <activity
+            android:name=".Main.MainActivity"
+            android:label="@string/title_activity_main"></activity>
+        <activity android:name=".Introduction.Activity.FindActivity" />
+        <activity android:name=".Introduction.Activity.RegisterActivity" />
+        <activity android:name=".Introduction.Activity.LoginActivity" />
         <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,19 +1,19 @@
-package com.dongyang.android.boda;
+package com.dongyang.android.boda.Introduction.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.dongyang.android.boda.Fragment.IdFindFragment;
-import com.dongyang.android.boda.Fragment.PwFindFragment;
+import com.dongyang.android.boda.Introduction.Fragment.IdFindFragment;
+import com.dongyang.android.boda.Introduction.Fragment.PwFindFragment;
+import com.dongyang.android.boda.R;
 
 public class FindActivity extends AppCompatActivity {
 

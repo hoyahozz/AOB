@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.dongyang.android.boda.Introduction.Activity.LoginActivity;
+
 public class StartActivity extends AppCompatActivity {
 
     @Override
@@ -19,6 +21,6 @@ public class StartActivity extends AppCompatActivity {
                 Intent intent = new Intent(StartActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
-        }, 3000);
+        }, 2500);
     }
 }
