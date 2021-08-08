@@ -1,4 +1,4 @@
-package com.dongyang.android.boda.Main.Map.Model.Measurement;
+package com.dongyang.android.boda.Map.Model.Measurement;
 
 /**
 

@@ -1,9 +1,9 @@
-package com.dongyang.android.boda.Main.Map.Marker;
+package com.dongyang.android.boda.Map.Marker;
 
 import android.content.Context;
 
 
-import com.dongyang.android.boda.Main.Map.Model.Bike.BikeItem;
+import com.dongyang.android.boda.Map.Model.Bike.BikeItem;
 import com.dongyang.android.boda.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;

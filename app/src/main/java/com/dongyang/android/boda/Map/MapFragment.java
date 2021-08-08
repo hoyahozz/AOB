@@ -1,4 +1,4 @@
-package com.dongyang.android.boda.Main;
+package com.dongyang.android.boda.Map;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -29,16 +29,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dongyang.android.boda.Main.Map.Marker.BikeRenderer;
-import com.dongyang.android.boda.Main.Map.Model.Bike.BikeItem;
-import com.dongyang.android.boda.Main.Map.Model.Bike.RentBikeStatus;
-import com.dongyang.android.boda.Main.Map.Model.Bike.Row;
-import com.dongyang.android.boda.Main.Map.Model.Bike.SeoulBike;
-import com.dongyang.android.boda.Main.Map.Model.Favorite.Favorite;
-import com.dongyang.android.boda.Main.Map.Model.Measurement.CalDistance;
+import com.dongyang.android.boda.Map.Marker.BikeRenderer;
+import com.dongyang.android.boda.Map.Model.Bike.BikeItem;
+import com.dongyang.android.boda.Map.Model.Bike.RentBikeStatus;
+import com.dongyang.android.boda.Map.Model.Bike.Row;
+import com.dongyang.android.boda.Map.Model.Bike.SeoulBike;
+import com.dongyang.android.boda.Map.Model.Favorite.Favorite;
+import com.dongyang.android.boda.Map.Model.Measurement.CalDistance;
 import com.dongyang.android.boda.R;
-import com.dongyang.android.boda.Main.Map.Service.BikeService;
-import com.dongyang.android.boda.Main.Map.Service.FavoriteService;
+import com.dongyang.android.boda.Map.Service.BikeService;
+import com.dongyang.android.boda.Map.Service.FavoriteService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -156,6 +156,9 @@ public class MapFragment extends Fragment
     private String f_lat = "";
     private String f_long = "";
     private String f_time = "";
+    
+    // 즐겨찾기
+    private ImageButton bikeFavorite;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -173,6 +176,8 @@ public class MapFragment extends Fragment
         mapView = (MapView) mapLayout.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
 
+        mLayout = mapLayout.findViewById(R.id.mapLayout);
+
         bikeBottomSheet = mapLayout.findViewById(R.id.map_seoulBike_bottomSheet);
         bikeMeasurementBottomSheet = mapLayout.findViewById(R.id.map_measurement_bottomSheet);
         bikeMeasurement = (ImageButton) mapLayout.findViewById(R.id.map_measurement_btn);
@@ -183,6 +188,7 @@ public class MapFragment extends Fragment
         bike_measurement_start = mapLayout.findViewById(R.id.map_measurement_start);
         bike_measurement_stop = mapLayout.findViewById(R.id.map_measurement_stop);
         bike_measurement_reset = mapLayout.findViewById(R.id.map_measurement_reset);
+        bikeFavorite = mapLayout.findViewById(R.id.map_my_favortie_btn);
         bikeBottomSheet.setVisibility(View.GONE);
 
 
@@ -196,7 +202,7 @@ public class MapFragment extends Fragment
         builder.addLocationRequest(locationRequest);
 
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.getContext());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
         // 위치 서비스 이용자 mFusedLocationClient
 
 
@@ -234,6 +240,9 @@ public class MapFragment extends Fragment
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
 
             startLocationUpdates(); // 3. 위치 업데이트 시작
+            bikeMyLocation.setVisibility(View.VISIBLE);
+            bikeMeasurement.setVisibility(View.VISIBLE);
+            bikeFavorite.setVisibility(View.VISIBLE);
 
 
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
@@ -247,10 +256,11 @@ public class MapFragment extends Fragment
 
                     @Override
                     public void onClick(View view) {
-
                         // 3-3. 사용자에게 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                        ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
-                                PERMISSIONS_REQUEST_CODE);
+                        requestPermissions(REQUIRED_PERMISSIONS,PERMISSIONS_REQUEST_CODE);
+
+//                        ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
+//                                PERMISSIONS_REQUEST_CODE);
                     }
                 }).show();
 
@@ -258,11 +268,14 @@ public class MapFragment extends Fragment
             } else {
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
-                        PERMISSIONS_REQUEST_CODE);
+                requestPermissions(REQUIRED_PERMISSIONS,PERMISSIONS_REQUEST_CODE);
+//                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
+//                        PERMISSIONS_REQUEST_CODE);
             }
 
         }
+
+
 
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false); // 로케이션 버튼 활성화
@@ -909,10 +922,13 @@ public class MapFragment extends Fragment
             if (check_result) {
                 // 퍼미션을 허용했다면 위치 업데이트를 시작합니다.
                 startLocationUpdates();
+                bikeMyLocation.setVisibility(View.VISIBLE);
+                bikeMeasurement.setVisibility(View.VISIBLE);
+                bikeFavorite.setVisibility(View.VISIBLE);
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[1])) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[1])) {
 
                     // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있습니다.
                     Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요. ",

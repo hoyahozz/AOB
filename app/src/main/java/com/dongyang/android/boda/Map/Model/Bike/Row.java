@@ -1,4 +1,4 @@
-package com.dongyang.android.boda.Main.Map.Model.Bike;
+package com.dongyang.android.boda.Map.Model.Bike;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;

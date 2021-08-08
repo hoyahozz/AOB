@@ -1,9 +1,9 @@
-package com.dongyang.android.boda.Main.Map.Service;
+package com.dongyang.android.boda.Map.Service;
 
 
 
 
-import com.dongyang.android.boda.Main.Map.Model.Favorite.Favorite;
+import com.dongyang.android.boda.Map.Model.Favorite.Favorite;
 
 import java.util.List;
 

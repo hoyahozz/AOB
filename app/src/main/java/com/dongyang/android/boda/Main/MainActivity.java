@@ -5,8 +5,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.dongyang.android.boda.Fragment.HomeFragment;
+;
+
 import com.dongyang.android.boda.R;
+import com.dongyang.android.boda.Repair.RepairFragment;
+import com.dongyang.android.boda.VoiceChat.VoiceChatFragment;
+import com.dongyang.android.boda.Map.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -64,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
                         transaction.replace(R.id.main_container, mapFragment);
                         transaction.commit();
                         break;
+                    case R.id.navigation_voice_chat:
+                        VoiceChatFragment voiceChatFragment = new VoiceChatFragment();
+                        transaction.replace(R.id.main_container, voiceChatFragment);
+                        transaction.commit();
+                        break;
+                    case R.id.navigation_repair :
+                        RepairFragment repairFragment = new RepairFragment();
+                        transaction.replace(R.id.main_container, repairFragment);
+                        transaction.commit();
+                        break;
                 }
                 return true;
             }
@@ -80,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.my_profile :
+            case R.id.my_profile:
                 return true;
         }
 

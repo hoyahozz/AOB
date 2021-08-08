@@ -1,4 +1,4 @@
-package com.dongyang.android.boda.Fragment;
+package com.dongyang.android.boda.Main;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

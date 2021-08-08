@@ -4,12 +4,25 @@
 
     <uses-permission android:name="com.dongyang.android.boda.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 권한 선언 -->
+    <!-- 구글맵 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- WiFI 또는 모바일 데이터를 바탕으로 기기위치 파악할 수 있게 해줌 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 위치 데이터를 바탕으로 최대한 정확하게 위치를 파악할 수 있게 한다. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 구글 play-services 내부적으로 구글 서버와 연동하기 위한 퍼미션 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- play-services 라이브러리에서 구글 서버의 콘텐츠를 외부 메모리 공간에 캐싱 개념으로 저장, 사용하기 위해 필요한 퍼미션 -->
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" /> <!-- 아고라 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 자가 수리 -->
+    <!-- Camera 기능 및 내/외부 저장소에 저장 할 수 있도록 권한설정 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera2" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BODA"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Repair.HelloCameraActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -26,7 +40,7 @@
 
         <activity
             android:name=".Main.MainActivity"
-            android:label="@string/title_activity_main"></activity>
+            android:label="@string/title_activity_main" />
         <activity android:name=".Introduction.Activity.FindActivity" />
         <activity android:name=".Introduction.Activity.RegisterActivity" />
         <activity android:name=".Introduction.Activity.LoginActivity" />
@@ -37,6 +51,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <!-- android:authorities="com.oaie.fileprovider" -->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
     </application>
 
 </manifest>
