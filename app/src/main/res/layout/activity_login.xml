@@ -13,6 +13,8 @@
         android:layout_marginTop="30dp"
         android:src="@drawable/logo_boda_text" />
 
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,26 +34,69 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/style_rounded_login"
         android:fontFamily="@font/nanum_barun_gothic"
-        android:hint="아이디"
+        android:inputType="textVisiblePassword"
+        android:digits="@string/text_id"
+        android:hint="아이디를 입력해주세요."
         android:paddingLeft="17dp"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/login_id_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:fontFamily="@font/nanum_square"
+        android:text="아이디를 입력해 주세요."
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="6dp"
+        android:textColor="#FF0000"
+        android:textSize="12sp"
+        android:maxLength="15"
+        android:visibility="gone"/>
 
     <EditText
         android:id="@+id/login_pw"
         android:layout_width="350dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/style_rounded_login"
         android:fontFamily="@font/nanum_barun_gothic"
-        android:hint="비밀번호"
+        android:hint="비밀번호를 입력해주세요."
         android:inputType="textPassword"
         android:paddingLeft="17dp"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
+        android:maxLength="16"
         android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/login_pw_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:fontFamily="@font/nanum_square"
+        android:text="비밀번호를 입력해주세요."
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="6dp"
+        android:textColor="#FF0000"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/login_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:fontFamily="@font/nanum_square"
+        android:text="아이디, 비밀번호를 다시 확인해주세요."
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="6dp"
+        android:textColor="#FF0000"
+        android:textSize="12sp"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,6 +104,7 @@
         android:orientation="horizontal">
 
         <CheckBox
+            android:id="@+id/login_stay_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -109,7 +155,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_marginRight="35dp"
+        android:layout_marginRight="25dp"
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 

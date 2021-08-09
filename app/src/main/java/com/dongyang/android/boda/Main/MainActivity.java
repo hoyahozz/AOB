@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.dongyang.android.boda.R;
 import com.dongyang.android.boda.Repair.RepairFragment;
 import com.dongyang.android.boda.VoiceChat.VoiceChatFragment;
-import com.dongyang.android.boda.Map.MapFragment;
+import com.dongyang.android.boda.Riding.Map.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 

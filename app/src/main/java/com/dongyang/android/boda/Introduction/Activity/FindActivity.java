@@ -71,7 +71,7 @@ public class FindActivity extends AppCompatActivity {
 
     private void FragmentView(int fragment){
 
-        //FragmentTransactiom를 이용해 프래그먼트를 사용합니다.
+        // FragmentTransactiom를 이용해 프래그먼트를 사용
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         switch (fragment){

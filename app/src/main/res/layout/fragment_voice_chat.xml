@@ -53,6 +53,7 @@
         android:digits="@string/legal_channel_name_characters"
         android:gravity="center"
         android:hint="채널 이름을 입력하세요."
+        android:textSize="15sp"
         android:textColorHint="@color/black"
         android:textColor="@color/black"
         android:inputType="text" />
@@ -67,6 +68,7 @@
         android:textColor="@color/white"
         android:background="@drawable/style_rounded_postive_button"
         android:enabled="false"
+        android:textSize="15sp"
         android:text="채널 접속" />
 
 

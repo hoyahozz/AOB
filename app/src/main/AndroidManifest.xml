@@ -44,7 +44,7 @@
         <activity android:name=".Introduction.Activity.FindActivity" />
         <activity android:name=".Introduction.Activity.RegisterActivity" />
         <activity android:name=".Introduction.Activity.LoginActivity" />
-        <activity android:name=".StartActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
