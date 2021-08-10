@@ -25,8 +25,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.dongyang.android.boda.Introduction.Activity.LoginActivity;
+import com.dongyang.android.boda.Introduction.Activity.RegisterActivity;
+import com.dongyang.android.boda.Introduction.Model.CheckSuccess;
+import com.dongyang.android.boda.Introduction.Service.IntroService;
 import com.dongyang.android.boda.R;
+import com.dongyang.android.boda.Repair.Model.Type;
+import com.dongyang.android.boda.Repair.Service.SendService;
+import com.dongyang.android.boda.YoutubeActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +42,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -88,6 +102,7 @@ public class RepairFragment extends Fragment {
                     mCurrentPhotoPath = ""; //initialize
                 }
             } catch (Exception e) {
+                Toast.makeText(this.getActivity(), "저장할 사진이 없습니다", Toast.LENGTH_SHORT).show();
                 Log.w(TAG, "SAVE ERROR", e);
             }
         });
@@ -104,7 +119,7 @@ public class RepairFragment extends Fragment {
 
             //촬영한 사진을 저장할 파일 생성
             File photoFile = null;
-            Log.d(TAG,"captureCamera ON");
+            Log.d(TAG, "captureCamera ON");
             try {
                 File tempDir = getActivity().getCacheDir();
 
@@ -143,6 +158,7 @@ public class RepairFragment extends Fragment {
     private void saveImg() {
         try {
             //저장할 파일 경로
+            Log.d(TAG, getActivity().getFilesDir().toString());
             File storageDir = new File(getActivity().getFilesDir() + "/capture");
             if (!storageDir.exists()) //폴더가 없으면 생성
                 storageDir.mkdirs();
@@ -171,11 +187,47 @@ public class RepairFragment extends Fragment {
                 }
             }
             Log.e(TAG, "Captured Saved");
-            Toast.makeText(this.getActivity(), "Capture Saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this.getActivity(), YoutubeActivity.class);
+            startActivity(intent);
+
+
+
         } catch (Exception e) {
             Log.w(TAG, "Capture Saving Error!", e);
             Toast.makeText(this.getActivity(), "Save failed", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void sendImg() {
+
+        String image = "zz";
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(SendService.SEND_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        SendService sendAPI = retrofit.create(SendService.class);
+
+        sendAPI.sendImage(image).enqueue(new Callback<Type>() {
+            @Override
+            public void onResponse(Call<Type> call, Response<Type> response) {
+                Log.d("Register", "Success");
+                if (response.isSuccessful()) { // 성공적으로 받아왔을 때
+                    Type type = response.body();
+                    Log.d("Register",type.getType());
+                    Toast.makeText(getActivity(), "서버 성공." + type.getType() , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Type> call, Throwable t) {
+                Toast.makeText(getActivity(), "알 수 없는 이유로 오류가 떴어요.", Toast.LENGTH_LONG).show();
+                t.printStackTrace();
+            }
+
+        });
     }
 
     private void loadImgArr() {
@@ -185,12 +237,43 @@ public class RepairFragment extends Fragment {
 
             File file = new File(storageDir, filename);
             Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+
+
+            // 데이터베이스 (비트맵 형태로 데이터베이스 접속할 때)
+   //         String image = bitmapToByteAray(bitmap);
             ivCapture.setImageBitmap(bitmap);
         } catch (Exception e) {
             Log.w(TAG, "Capture loading Error", e);
             //Toast.makeText(this, "load failed", Toast.LENGTH_SHORT).show();
         }
     }
+
+//    public String bitmapToByteAray(Bitmap bitmap) {
+//        String image = "";
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+//        image = "&image=" + byteArrayToBinaryString(byteArray);
+//        return image;
+//    }
+//
+//    public static String byteArrayToBinaryString(byte[] b) {
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < b.length; ++i) {
+//            sb.append(byteToBinaryString(b[i]));
+//        }
+//        return sb.toString();
+//    }
+//
+//    public static String byteToBinaryString(byte n) {
+//        StringBuilder sb = new StringBuilder("0000000");
+//        for (int bit = 0; bit < 8; bit++) {
+//            if (((n >> bit) & 1) > 0) {
+//                sb.setCharAt(7 - bit, '1');
+//            }
+//        }
+//        return sb.toString();
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

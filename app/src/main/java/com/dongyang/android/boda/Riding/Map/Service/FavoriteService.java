@@ -14,7 +14,7 @@ import retrofit2.http.POST;
 
 public interface FavoriteService {
 
-    String FAVORITE_URL = "http://192.168.0.4/";
+    String FAVORITE_URL = "http://172.16.100.129/";
 
     @FormUrlEncoded
     @POST("boda/map/favorite.php")

@@ -109,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Call<CheckSuccess> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "로그인 실패!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "!", Toast.LENGTH_LONG).show();
                             t.printStackTrace();
                         }
                     });
@@ -147,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     // 비밀번호는 재확인 비밀번호와 일치하는지, 아이디 중복확인은 완전히 완료하였는지,
                     // 아이디, 비밀번호는 조건에 맞게끔 입력하였는지 검사 후 일치하면 데이터베이스를 받아오는 단계로 넘어감
-                    if (pw.equals(pw2) && validate == 0 && idLengthCheck == true && pwLengthCheck == true) {
+                    if (pw.equals(pw2) && validate == 0) {
 
                         Retrofit retrofit = new Retrofit.Builder()
                                 .baseUrl(IntroService.INTRO_URL)
