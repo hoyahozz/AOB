@@ -10,7 +10,7 @@ import retrofit2.http.POST;
 
 public interface IntroService {
 
-    String INTRO_URL = "http://172.16.100.129/";
+    String INTRO_URL = "http://192.168.219.103/";
 
     @FormUrlEncoded
     @POST("boda/intro/register.php")

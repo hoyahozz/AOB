@@ -145,6 +145,9 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 } else { // 값을 모두 넣었을 때
 
+                    Log.d(TAG,String.valueOf(idLengthCheck));
+                    Log.d(TAG,String.valueOf(pwLengthCheck));
+
                     // 비밀번호는 재확인 비밀번호와 일치하는지, 아이디 중복확인은 완전히 완료하였는지,
                     // 아이디, 비밀번호는 조건에 맞게끔 입력하였는지 검사 후 일치하면 데이터베이스를 받아오는 단계로 넘어감
                     if (pw.equals(pw2) && validate == 0) {
@@ -241,6 +244,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 String pw = register_pw.getText().toString();
+                String pw2 = register_pw2.getText().toString();
                 Matcher matcher = VALID_PASSWOLD_REGEX_ALPHA_NUM.matcher(pw);
                 boolean pwLengthCheck = matcher.matches();
                 if (!hasFocus) {
@@ -248,6 +252,16 @@ public class RegisterActivity extends AppCompatActivity {
                         register_pw_length_check.setTextColor(Color.RED);
                     } else {
                         register_pw_length_check.setTextColor(0xFF46b95b);
+                        pwLengthCheck = true;
+                    }
+                    if (!pw2.equals("") && !pw.equals(pw2)) {
+                        register_pw_check.setTextColor(Color.RED);
+                        register_pw_check.setText("비밀번호가 일치하지 않습니다! 다시 입력해주세요.");
+                        register_pw_check.setVisibility(View.VISIBLE);
+                    } else if(!pw2.equals("") && pw.equals(pw2)) {
+                        register_pw_check.setTextColor(0xFF46b95b);
+                        register_pw_check.setText("비밀번호가 일치해요.");
+                        register_pw_check.setVisibility(View.VISIBLE);
                     }
                 }
             }

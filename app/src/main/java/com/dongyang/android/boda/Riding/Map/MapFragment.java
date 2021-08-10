@@ -1,28 +1,38 @@
 package com.dongyang.android.boda.Riding.Map;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
@@ -123,11 +133,15 @@ public class MapFragment extends Fragment
     private View bikeBottomSheet;
     private View bikeMeasurementBottomSheet;
 
+    // 따릉이 커스텀 마커 설정
+    private View bikeMarkerLayout;
+    private TextView bike_detail;
+
     private TextView bottomRackTotCnt, bottomParkingBikeTotCnt, bottomStationName, bike_distance, bike_avg_speed;
     private Chronometer bike_timer;
 
     private ImageButton bikeMeasurement, bikeMyLocation;
-    private Button bike_measurement_start, bike_measurement_stop, bike_measurement_reset;
+    private ImageButton bike_measurement_start, bike_measurement_stop, bike_measurement_reset;
     private AlertDialog.Builder dialog;
     private boolean bikeON = false;
 
@@ -172,6 +186,9 @@ public class MapFragment extends Fragment
         // Inflate the layout for this fragment
         View mapLayout = inflater.inflate(R.layout.fragment_map, container, false);
 
+        // 커스텀 마커 설정
+        bikeMarkerLayout = inflater.inflate(R.layout.item_seoul_bike_marker, null);
+        bike_detail = bikeMarkerLayout.findViewById(R.id.map_seoulBike_detail);
 
         mapView = (MapView) mapLayout.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
@@ -368,13 +385,17 @@ public class MapFragment extends Fragment
                             mClusterManager.clearItems();
                             bikeBottomSheet.setVisibility(View.GONE);
 
+                            Animation animation = new AlphaAnimation(0, 1);
+                            animation.setDuration(1000);
+
                             bikeON = true;
                             onMapReady(mMap);
                             bef_lat = mCurrentLocation.getLatitude();
                             bef_long = mCurrentLocation.getLongitude();
                             // 아이콘 변경
-                            bikeMeasurement.setImageResource(R.drawable.icon_bike_on);
+                            bikeMeasurement.setImageResource(R.drawable.ic_riding_on);
                             bikeMeasurementBottomSheet.setVisibility(View.VISIBLE);
+                            bikeMeasurementBottomSheet.setAnimation(animation);
                             // 현 위치로 이동
                             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
                             mMap.moveCamera(cameraUpdate);
@@ -396,7 +417,7 @@ public class MapFragment extends Fragment
                             mMap.clear();
                             bikeON = false;
                             onMapReady(mMap);
-                            bikeMeasurement.setImageResource(R.drawable.icon_bike);
+                            bikeMeasurement.setImageResource(R.drawable.ic_riding_off);
                             bikeMeasurementBottomSheet.setVisibility(View.GONE);
                         }
                     });
@@ -418,11 +439,12 @@ public class MapFragment extends Fragment
                     bike_measurement_stop.setVisibility(View.VISIBLE);
                     bike_measurement_reset.setEnabled(false);
 
+
                     // 거리 설정
                     MarkerOptions ridingStart = new MarkerOptions();
                     ridingStart.position(currentPosition);
                     ridingStart.title("기록 측정 시작지점");
-                    ridingStart.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    ridingStart.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_riding_start_marker)));
                     ridingStartMarker = mMap.addMarker(ridingStart);
 
 
@@ -801,6 +823,8 @@ public class MapFragment extends Fragment
         });
     }
 
+
+
     public void getBikeAPI() {
 
         Log.d("getBikeAPI", "START");
@@ -837,13 +861,17 @@ public class MapFragment extends Fragment
                         double stationLatitude = row.get(i).getStationLatitude();
                         double stationLongitude = row.get(i).getStationLongitude();
 
+                        bike_detail.setText(String.valueOf(parkingBikeTotCnt));
+                        Bitmap icon = createDrawableFromView(getActivity(), bikeMarkerLayout);
+
                         LatLng SEOUL_BIKE_LOCATION = new LatLng(stationLatitude, stationLongitude);
 
                         // Row BikeItem = new Row(rackTotCnt, stationName, parkingBikeTotCnt, shared, stationLatitude, stationLongitude, stationId, SEOUL_BIKE_LOCATION);
-                        BikeItem bikeItem = new BikeItem(stationLatitude, stationLongitude, rackTotCnt, stationName, parkingBikeTotCnt);
+                        BikeItem bikeItem = new BikeItem(stationLatitude, stationLongitude, rackTotCnt, stationName, parkingBikeTotCnt, icon);
                         mClusterManager.addItem(bikeItem);
 
                     }
+                    mMap.animateCamera(CameraUpdateFactory.zoomOut());
                 }
             }
 
@@ -854,8 +882,9 @@ public class MapFragment extends Fragment
         });
 
 
-    }
 
+
+    }
 
     @Override
     public boolean onClusterItemClick(BikeItem bikeItem) {
@@ -863,12 +892,8 @@ public class MapFragment extends Fragment
 
 
         bottomStationName = getView().findViewById(R.id.map_detail_stationName);
-        bottomRackTotCnt = getView().findViewById(R.id.map_detail_rackTotCnt);
-        bottomParkingBikeTotCnt = getView().findViewById(R.id.map_detail_parkingBikeTotCnt);
 
         bottomStationName.setText(bikeItem.getStationName());
-        bottomRackTotCnt.setText(String.valueOf(bikeItem.getRackTotCnt()));
-        bottomParkingBikeTotCnt.setText(String.valueOf(bikeItem.getParkingBikeTotCnt()));
         bikeBottomSheet.setVisibility(View.VISIBLE);
 
 //        bikeBottomSheetDialog modalbikeBottomSheet = new bikeBottomSheetDialog(this);
@@ -1048,5 +1073,41 @@ public class MapFragment extends Fragment
             }
         };
         checkUpdate.start();
+    }
+
+    // vector -> bitmap
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+
+
+
+    // xml -> bitmap
+    private Bitmap createDrawableFromView(Context context, View view) {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+
+        return bitmap;
     }
 }
