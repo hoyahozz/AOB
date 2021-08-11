@@ -13,14 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:src="@drawable/logo_boda_text" />
+        android:src="@drawable/logo_main" />
 
 
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="자전거를 보다 똑똑하게"
+        android:text="자전거의 모든 것"
         android:textSize="15sp"
         android:gravity="center"
         android:textColor="@color/gray"

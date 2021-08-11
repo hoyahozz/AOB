@@ -1,6 +1,8 @@
 package com.dongyang.android.boda.Main;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -29,12 +31,28 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView main_bnv;
     private ImageView userImage;
 
+    private SharedPreferences pref;
+    private String userName, userId;
+    private Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         main_bnv = findViewById(R.id.main_bnv);
+
+        // 세션 영역에서 유저 이름 받아오기
+        pref = getSharedPreferences("userInfo", MODE_PRIVATE);
+        userName = pref.getString("name", "김이엘").toString();
+        userId = pref.getString("id","").toString();
+
+        Log.d("login", userName);
+
+        // 프래그먼트로 넘길 bundle 값 입력
+        bundle = new Bundle();
+        bundle.putString("userName", userName);
+        bundle.putString("userId",userId);
 
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
@@ -46,9 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void FragmentView() {
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        HomeFragment homeFragment = new HomeFragment();
+        MapFragment mapFragment = new MapFragment();
+        VoiceChatFragment voiceChatFragment = new VoiceChatFragment();
+        RepairFragment repairFragment = new RepairFragment();
 
-        transaction.add(R.id.main_container, new HomeFragment());
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        homeFragment.setArguments(bundle);
+        transaction.replace(R.id.main_container, homeFragment);
         transaction.commit();
 
         main_bnv.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -59,22 +82,21 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        HomeFragment homeFragment = new HomeFragment();
+                        homeFragment.setArguments(bundle);
                         transaction.replace(R.id.main_container, homeFragment);
                         transaction.commit();
                         break;
                     case R.id.navigation_ride:
-                        MapFragment mapFragment = new MapFragment();
+                        mapFragment.setArguments(bundle);
                         transaction.replace(R.id.main_container, mapFragment);
                         transaction.commit();
                         break;
                     case R.id.navigation_voice_chat:
-                        VoiceChatFragment voiceChatFragment = new VoiceChatFragment();
                         transaction.replace(R.id.main_container, voiceChatFragment);
                         transaction.commit();
                         break;
-                    case R.id.navigation_repair :
-                        RepairFragment repairFragment = new RepairFragment();
+                    case R.id.navigation_repair:
+                        repairFragment.setArguments(bundle);
                         transaction.replace(R.id.main_container, repairFragment);
                         transaction.commit();
                         break;

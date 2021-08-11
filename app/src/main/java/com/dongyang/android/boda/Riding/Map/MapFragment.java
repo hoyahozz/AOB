@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -44,11 +43,12 @@ import com.dongyang.android.boda.Riding.Map.Model.Bike.BikeItem;
 import com.dongyang.android.boda.Riding.Map.Model.Bike.RentBikeStatus;
 import com.dongyang.android.boda.Riding.Map.Model.Bike.Row;
 import com.dongyang.android.boda.Riding.Map.Model.Bike.SeoulBike;
-import com.dongyang.android.boda.Riding.Map.Model.Favorite.Favorite;
+import com.dongyang.android.boda.User.FavoriteActivity;
+import com.dongyang.android.boda.User.Model.Favorite;
 import com.dongyang.android.boda.Riding.Map.Model.Measurement.CalDistance;
 import com.dongyang.android.boda.R;
 import com.dongyang.android.boda.Riding.Map.Service.BikeService;
-import com.dongyang.android.boda.Riding.Map.Service.FavoriteService;
+import com.dongyang.android.boda.User.Service.FavoriteService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -66,6 +66,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
@@ -187,7 +189,7 @@ public class MapFragment extends Fragment
         View mapLayout = inflater.inflate(R.layout.fragment_map, container, false);
 
         // 커스텀 마커 설정
-        bikeMarkerLayout = inflater.inflate(R.layout.item_seoul_bike_marker, null);
+        bikeMarkerLayout = inflater.inflate(R.layout.marker_seoul_bike, null);
         bike_detail = bikeMarkerLayout.findViewById(R.id.map_seoulBike_detail);
 
         mapView = (MapView) mapLayout.findViewById(R.id.map);
@@ -306,6 +308,14 @@ public class MapFragment extends Fragment
             }
         });
 
+        bikeFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), FavoriteActivity.class);
+                startActivity(intent);
+            }
+        });
+
 //        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
 //            @Override
 //            public boolean onMyLocationButtonClick() { // 로케이션 버튼을 눌렀을 때
@@ -350,7 +360,7 @@ public class MapFragment extends Fragment
                 }
             });
 
-            setFavoriteLocation();
+            getFavoriteLocation();
             getBikeAPI();
         } else {
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -444,7 +454,7 @@ public class MapFragment extends Fragment
                     MarkerOptions ridingStart = new MarkerOptions();
                     ridingStart.position(currentPosition);
                     ridingStart.title("기록 측정 시작지점");
-                    ridingStart.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_riding_start_marker)));
+                    ridingStart.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_start_marker)));
                     ridingStartMarker = mMap.addMarker(ridingStart);
 
 
@@ -468,11 +478,11 @@ public class MapFragment extends Fragment
             public void onClick(View view) {
                 bike_timer.stop();
 
-                MarkerOptions ridingPause = new MarkerOptions();
-                ridingPause.position(currentPosition);
-                ridingPause.title("기록 측정 정지지점");
-                ridingPause.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                ridingPauseMarker = mMap.addMarker(ridingPause);
+//                MarkerOptions ridingPause = new MarkerOptions();
+//                ridingPause.position(currentPosition);
+//                ridingPause.title("기록 측정 정지지점");
+//                ridingPause.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//                ridingPauseMarker = mMap.addMarker(ridingPause);
 
                 pauseOffset = SystemClock.elapsedRealtime() - bike_timer.getBase();
                 timer = SystemClock.elapsedRealtime() - bike_timer.getBase();
@@ -497,11 +507,11 @@ public class MapFragment extends Fragment
                 dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ridingPauseMarker.remove(); // 중지 지점 삭제
+                        // ridingPauseMarker.remove(); // 중지 지점 삭제
                         MarkerOptions ridingEnd = new MarkerOptions();
                         ridingEnd.position(currentPosition);
                         ridingEnd.title("기록 측정 종료 지점");
-                        ridingEnd.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        ridingEnd.icon((BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_stop_marker))));
                         ridingEndMarker = mMap.addMarker(ridingEnd);
 
                         // 종료 지점 경도, 위도 설정
@@ -609,7 +619,7 @@ public class MapFragment extends Fragment
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); // 현재 좌표 지정
                     mMap.moveCamera(cameraUpdate); // 현재 좌표로 이동
                     // 폴리라인 생성
-                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(cur_latLng).add(bef_latLng));
+                    mMap.addPolyline(new PolylineOptions().color(0xFF6BC77C).width(30.0f).geodesic(true).add(cur_latLng).add(bef_latLng));
                     bef_latLng = cur_latLng;
 
 
@@ -677,12 +687,20 @@ public class MapFragment extends Fragment
 
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+
+        Log.d(TAG,"onPause");
+    }
+
+    @Override
     public void onStop() {
 
         super.onStop();
         mapView.onStop();
 
-        if (mFusedLocationClient != null) {
+        if (mFusedLocationClient != null && bikeON == false) {
 
             Log.d(TAG, "onStop : call stopLocationUpdates");
             mFusedLocationClient.removeLocationUpdates(locationCallback);
@@ -776,18 +794,20 @@ public class MapFragment extends Fragment
     }
 
 
-    public void setFavoriteLocation() {
+    public void getFavoriteLocation() {
         Log.d("Favorite", "START");
-        String id = "hoya";
+        String id = getArguments().getString("userId");
+
+        Gson gson = new GsonBuilder().setLenient().create();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FavoriteService.FAVORITE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         FavoriteService retrofitAPI = retrofit.create(FavoriteService.class);
 
-        retrofitAPI.postData("hoya").enqueue(new Callback<List<Favorite>>() {
+        retrofitAPI.getFavorite("select", id).enqueue(new Callback<List<Favorite>>() {
             @Override
             public void onResponse(Call<List<Favorite>> call, retrofit2.Response<List<Favorite>> response) {
                 if (response.isSuccessful()) {
@@ -808,7 +828,7 @@ public class MapFragment extends Fragment
                         markerOptions.title(title);
                         markerOptions.snippet(content);
                         markerOptions.draggable(true);
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                        markerOptions.icon((BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_favorite_marker))));
                         favoriteMarker = mMap.addMarker(markerOptions);
 
                     }
@@ -871,7 +891,7 @@ public class MapFragment extends Fragment
                         mClusterManager.addItem(bikeItem);
 
                     }
-                    mMap.animateCamera(CameraUpdateFactory.zoomOut());
+                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
                 }
             }
 

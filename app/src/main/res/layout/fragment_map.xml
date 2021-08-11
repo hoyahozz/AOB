@@ -32,7 +32,7 @@
             android:background="@drawable/style_circle_map_button"
             android:padding="6dp"
             android:visibility="gone"
-            android:src="@drawable/ic_map_favorite" />
+            android:src="@drawable/ic_map_favorite_btn" />
 
         <ImageButton
             android:id="@+id/map_my_location_btn"

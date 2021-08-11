@@ -1,4 +1,4 @@
-package com.dongyang.android.boda.Riding.Map.Model.Favorite;
+package com.dongyang.android.boda.User.Model;
 
 import com.google.gson.annotations.SerializedName;
 
