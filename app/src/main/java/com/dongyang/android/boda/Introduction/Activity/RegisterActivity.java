@@ -150,7 +150,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     // 비밀번호는 재확인 비밀번호와 일치하는지, 아이디 중복확인은 완전히 완료하였는지,
                     // 아이디, 비밀번호는 조건에 맞게끔 입력하였는지 검사 후 일치하면 데이터베이스를 받아오는 단계로 넘어감
-                    if (pw.equals(pw2) && validate == 0) {
+                    if (pw.equals(pw2) && validate == 0 && idLengthCheck == true && pwLengthCheck == true) {
 
                         Retrofit retrofit = new Retrofit.Builder()
                                 .baseUrl(IntroService.INTRO_URL)
@@ -166,6 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (response.isSuccessful() && response.body() != null) { // 성공적으로 받아왔을 때
                                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class); // 로그인 화면으로
                                     startActivity(intent);
+                                    finish();
                                 }
                             }
 
@@ -174,6 +175,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "알 수 없는 이유로 오류가 떴어요.", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 startActivity(intent);
+                                finish();
                                 t.printStackTrace();
                             }
                         });
@@ -246,13 +248,12 @@ public class RegisterActivity extends AppCompatActivity {
                 String pw = register_pw.getText().toString();
                 String pw2 = register_pw2.getText().toString();
                 Matcher matcher = VALID_PASSWOLD_REGEX_ALPHA_NUM.matcher(pw);
-                boolean pwLengthCheck = matcher.matches();
+                pwLengthCheck = matcher.matches();
                 if (!hasFocus) {
                     if (pwLengthCheck == false) {
                         register_pw_length_check.setTextColor(Color.RED);
                     } else {
                         register_pw_length_check.setTextColor(0xFF46b95b);
-                        pwLengthCheck = true;
                     }
                     if (!pw2.equals("") && !pw.equals(pw2)) {
                         register_pw_check.setTextColor(Color.RED);

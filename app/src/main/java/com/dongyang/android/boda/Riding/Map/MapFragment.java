@@ -327,7 +327,7 @@ public class MapFragment extends Fragment
 //            }
 //        });
 
-        if (bikeON == false) { // ★ 거리,속도 측정 모드가 켜져있을 때 다른 마커를 제외시킨다. ★
+        if (bikeON == false) { // ★ 라이딩 측정 모드가 꺼져있을 때만 다른 마커를 활성화시킨다. ★
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
@@ -692,6 +692,14 @@ public class MapFragment extends Fragment
         mapView.onPause();
 
         Log.d(TAG,"onPause");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+
+        Log.d(TAG,"onResume");
     }
 
     @Override

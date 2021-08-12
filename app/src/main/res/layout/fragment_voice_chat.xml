@@ -14,19 +14,17 @@
         android:fontFamily="@font/nanum_barun_gothic"
         android:text="함께 달려요!"
         android:textColor="@color/black"
-        android:textSize="35sp"
-        android:textStyle="bold" />
+        android:textSize="35sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="17dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/nanum_barun_gothic"
+        android:fontFamily="@font/nanum_barun_gothic_light"
         android:text="음성으로 자유롭게 소통해보세요."
         android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="16sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nanum_barun_gothic"
+            android:fontFamily="@font/nanum_square"
             android:layout_gravity="center"
             android:text="채널명은 영어만 입력 가능해요."
             android:layout_marginBottom="5dp"
@@ -53,7 +51,7 @@
             android:layout_gravity="center"
             android:background="@drawable/style_rounded_login"
             android:digits="@string/legal_channel_name_characters"
-            android:fontFamily="@font/nanum_square"
+            android:fontFamily="@font/nanum_barun_gothic_light"
             android:gravity="center"
             android:hint="채널 이름을 입력하세요."
             android:inputType="text"

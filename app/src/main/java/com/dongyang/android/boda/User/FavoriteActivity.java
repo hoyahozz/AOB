@@ -44,6 +44,8 @@ public class FavoriteActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.favorite_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
         f_recyclerView = findViewById(R.id.favorite_recyclerView);
         f_refresh = findViewById(R.id.favorite_swipe);
@@ -70,14 +72,14 @@ public class FavoriteActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_toolbar_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.my_profile:
+            case android.R.id.home :
+                finish();
                 return true;
         }
 

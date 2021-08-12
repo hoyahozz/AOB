@@ -88,8 +88,7 @@
         android:fontFamily="@font/nanum_barun_gothic"
         android:text="소중한 계정을\n함께 찾아봐요!"
         android:textColor="@color/black"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textSize="30sp" />
 
     <FrameLayout
         android:id="@+id/find_container"

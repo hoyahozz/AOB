@@ -14,19 +14,17 @@
         android:fontFamily="@font/nanum_barun_gothic"
         android:text="혼자 수리해보세요!"
         android:textColor="@color/black"
-        android:textSize="35sp"
-        android:textStyle="bold" />
+        android:textSize="35sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="17dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/nanum_barun_gothic"
+        android:fontFamily="@font/nanum_barun_gothic_light"
         android:text="고장난 부품을 사진으로 찍어보세요.\n저희가 수리를 도와드릴게요!"
         android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="16sp"/>
 
     <!--
     <LinearLayout
