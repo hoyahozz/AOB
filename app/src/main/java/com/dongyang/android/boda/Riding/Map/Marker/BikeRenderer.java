@@ -40,6 +40,7 @@ public class BikeRenderer extends DefaultClusterRenderer<BikeItem> {
         super.setOnClusterItemClickListener(listener);
     }
 
+
 }
 
 

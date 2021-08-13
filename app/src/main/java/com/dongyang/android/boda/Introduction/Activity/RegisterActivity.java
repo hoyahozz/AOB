@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     private String TAG = "Register";
 
     private Button register_button;
-    private ImageButton register_id_validate, register_email_validate;
+    private ImageButton register_id_validate;
     private EditText register_id, register_pw, register_pw2, register_name,
             register_number, register_email, register_sos;
     private Toolbar toolbar;

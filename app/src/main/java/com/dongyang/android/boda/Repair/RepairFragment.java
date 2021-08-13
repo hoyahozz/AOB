@@ -25,16 +25,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.dongyang.android.boda.Introduction.Activity.LoginActivity;
-import com.dongyang.android.boda.Introduction.Activity.RegisterActivity;
-import com.dongyang.android.boda.Introduction.Model.CheckSuccess;
-import com.dongyang.android.boda.Introduction.Service.IntroService;
 import com.dongyang.android.boda.R;
-import com.dongyang.android.boda.Repair.Model.Type;
+import com.dongyang.android.boda.Repair.Model.Result;
 import com.dongyang.android.boda.Repair.Service.SendService;
 import com.dongyang.android.boda.YoutubeActivity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,7 +37,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,6 +62,7 @@ public class RepairFragment extends Fragment {
     private Button btnCamera, btnSave;
     private ImageView ivCapture;
     private String mCurrentPhotoPath;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,7 +164,7 @@ public class RepairFragment extends Fragment {
             if (!storageDir.exists()) //폴더가 없으면 생성
                 storageDir.mkdirs();
 
-            String filename = "캡쳐파일" + ".jpg";
+            String filename = "file" + ".jpg";
 
             //기존에 있다면 삭제
             File file = new File(storageDir, filename);
@@ -187,9 +188,12 @@ public class RepairFragment extends Fragment {
                 }
             }
             Log.e(TAG, "Captured Saved");
-            Toast.makeText(this.getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this.getActivity(), YoutubeActivity.class);
-            startActivity(intent);
+
+            sendImg(file);
+
+            // Toast.makeText(this.getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
+            // Intent intent = new Intent(this.getActivity(), YoutubeActivity.class);
+            // startActivity(intent);
 
 
 
@@ -199,30 +203,46 @@ public class RepairFragment extends Fragment {
         }
     }
 
-    private void sendImg() {
+    // 파일을 라떼판다 서버로 보내는 형식
+    private void sendImg(File file) {
 
-        String image = "zz";
+        Log.d(TAG,file.toString());
+        Log.d(TAG,file.getName());
+
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file",file.getName(),fileBody);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.MINUTES)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(SendService.SEND_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         SendService sendAPI = retrofit.create(SendService.class);
 
-        sendAPI.sendImage(image).enqueue(new Callback<Type>() {
+        sendAPI.sendImage(filePart).enqueue(new Callback<Result>() {
             @Override
-            public void onResponse(Call<Type> call, Response<Type> response) {
+            public void onResponse(Call<Result> call, Response<Result> response) {
                 Log.d("Register", "Success");
                 if (response.isSuccessful()) { // 성공적으로 받아왔을 때
-                    Type type = response.body();
-                    Log.d("Register",type.getType());
-                    Toast.makeText(getActivity(), "서버 성공." + type.getType() , Toast.LENGTH_LONG).show();
+                    Result result = response.body();
+                    Log.d("Register",result.getResult());
+                    Toast.makeText(getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), YoutubeActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getActivity(), "사진을 인식하지 못했어요! 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Type> call, Throwable t) {
+            public void onFailure(Call<Result> call, Throwable t) {
                 Toast.makeText(getActivity(), "알 수 없는 이유로 오류가 떴어요.", Toast.LENGTH_LONG).show();
                 t.printStackTrace();
             }
@@ -233,7 +253,7 @@ public class RepairFragment extends Fragment {
     private void loadImgArr() {
         try {
             File storageDir = new File(getActivity().getFilesDir() + "/capture");
-            String filename = "캡쳐파일" + ".jpg";
+            String filename = "file" + ".jpg";
 
             File file = new File(storageDir, filename);
             Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));

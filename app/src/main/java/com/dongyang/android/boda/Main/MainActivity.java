@@ -19,6 +19,8 @@ import com.google.android.material.navigation.NavigationBarView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private final int FRAGMENT_REPAIR = 4;
     private BottomNavigationView main_bnv;
     private ImageView userImage;
+
+//    Fragment homeFragment, mapFragment, voiceChatFragment, repairFragment;
 
     private SharedPreferences pref;
     private String userName, userId;
@@ -65,43 +69,120 @@ public class MainActivity extends AppCompatActivity {
     private void FragmentView() {
 
         HomeFragment homeFragment = new HomeFragment();
-        MapFragment mapFragment = new MapFragment();
+        MapFragment ridingFragment = new MapFragment();
         VoiceChatFragment voiceChatFragment = new VoiceChatFragment();
         RepairFragment repairFragment = new RepairFragment();
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // 유저 정보 프래그먼트로 보내기
         homeFragment.setArguments(bundle);
-        transaction.replace(R.id.main_container, homeFragment);
-        transaction.commit();
+        ridingFragment.setArguments(bundle);
+        voiceChatFragment.setArguments(bundle);
+        repairFragment.setArguments(bundle);
+        // 초기 화면 설정
+        fragmentManager.beginTransaction().replace(R.id.main_container, homeFragment, "home").commitAllowingStateLoss();
 
         main_bnv.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                // FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                // 아이템을 생성할 때마다 transaction 을 따로 만들어주어 관리해야 함.
 
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        homeFragment.setArguments(bundle);
-                        transaction.replace(R.id.main_container, homeFragment);
-                        transaction.commit();
-                        break;
+
+                        if(fragmentManager.findFragmentByTag("home") != null) {
+                            // 프래그먼트가 존재한다면 보여주기
+                            fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
+                        } else { // 프래그먼트가 존재하지 않는다면 추가
+                            fragmentManager.beginTransaction().add(R.id.main_container, homeFragment, "home").commit();
+                        }
+
+                        // 다른 프래그먼트가 보일땐 가리기
+                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
+                        }
+                        
+                        return true;
+
                     case R.id.navigation_ride:
-                        mapFragment.setArguments(bundle);
-                        transaction.replace(R.id.main_container, mapFragment);
-                        transaction.commit();
-                        break;
+
+                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                            // 프래그먼트가 존재한다면 보여주기
+                            fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("riding")).commit();
+                        } else {
+                            fragmentManager.beginTransaction().add(R.id.main_container, ridingFragment, "riding").commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("home") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
+                        }
+
+                        return true;
                     case R.id.navigation_voice_chat:
-                        transaction.replace(R.id.main_container, voiceChatFragment);
-                        transaction.commit();
-                        break;
+
+                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                            // 프래그먼트가 존재한다면 보여주기
+                            fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("voiceChat")).commit();
+                        } else {
+                            fragmentManager.beginTransaction().add(R.id.main_container, voiceChatFragment, "voiceChat").commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("home") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
+                        }
+
+                        return true;
                     case R.id.navigation_repair:
-                        repairFragment.setArguments(bundle);
-                        transaction.replace(R.id.main_container, repairFragment);
-                        transaction.commit();
-                        break;
+
+                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                            // 프래그먼트가 존재한다면 보여주기
+                            fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("repair")).commit();
+                        } else {
+                            fragmentManager.beginTransaction().add(R.id.main_container, repairFragment, "repair").commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
+                        }
+
+                        if(fragmentManager.findFragmentByTag("home") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
+                        }
+
+                        return true;
+                    default: return false;
                 }
-                return true;
             }
         });
 

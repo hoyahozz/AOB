@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +19,8 @@ import com.dongyang.android.boda.User.Adapter.Decoration.FavoriteDecoration;
 import com.dongyang.android.boda.User.Adapter.FavoriteAdapter;
 import com.dongyang.android.boda.User.Model.Favorite;
 import com.dongyang.android.boda.User.Service.FavoriteService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,8 @@ public class FavoriteActivity extends AppCompatActivity {
     private FavoriteAdapter f_adapter;
     private SwipeRefreshLayout f_refresh;
     private List<Favorite> f_datas = new ArrayList<>();
+    private SharedPreferences pref;
+    private String userName, userId;
     FavoriteDecoration favoriteDecoration;
 
     @Override
@@ -47,13 +52,18 @@ public class FavoriteActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
+        // 세션 영역에서 유저 이름 받아오기
+        pref = getSharedPreferences("userInfo", MODE_PRIVATE);
+        userName = pref.getString("name", "김이엘").toString();
+        userId = pref.getString("id","").toString();
+
         f_recyclerView = findViewById(R.id.favorite_recyclerView);
         f_refresh = findViewById(R.id.favorite_swipe);
         favoriteDecoration = new FavoriteDecoration(30); // 아이템 간 간격 지정
 
         f_recyclerView.setHasFixedSize(true);
         f_recyclerView.addItemDecoration(new DividerItemDecoration(FavoriteActivity.this, DividerItemDecoration.VERTICAL)); // 구분선 지정
-        f_recyclerView.addItemDecoration(favoriteDecoration); // 간격 지정
+        // f_recyclerView.addItemDecoration(favoriteDecoration); // 간격 지정
         f_recyclerView.setLayoutManager(new LinearLayoutManager(FavoriteActivity.this));
 
         getFavorite();
@@ -87,14 +97,17 @@ public class FavoriteActivity extends AppCompatActivity {
     }
 
     public void getFavorite() {
+
+        Gson gson = new GsonBuilder().setLenient().create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FavoriteService.FAVORITE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         FavoriteService retrofitAPI = retrofit.create(FavoriteService.class);
 
-        retrofitAPI.getFavorite("select","hoya").enqueue(new Callback<List<Favorite>>() {
+        retrofitAPI.getFavorite(userId).enqueue(new Callback<List<Favorite>>() {
             @Override
             public void onResponse(Call<List<Favorite>> call, Response<List<Favorite>> response) {
                 if (response.isSuccessful()) { // 성공적으로 받아왔을 때

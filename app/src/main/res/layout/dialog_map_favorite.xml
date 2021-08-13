@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/style_rounded_layout"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="나만의 장소를 등록해봐요!"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/dialog_favorite_title"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/style_rounded_login"
+        android:fontFamily="@font/nanum_barun_gothic_light"
+        android:hint="즐겨찾는 장소의 이름을 입력해주세요."
+        android:inputType="text"
+        android:maxLength="15"
+        android:paddingLeft="17dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/dialog_favorite_content"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/style_rounded_login"
+        android:fontFamily="@font/nanum_barun_gothic_light"
+        android:hint="즐겨찾는 장소를 간략하게 설명해주세요."
+        android:inputType="text"
+        android:maxLength="15"
+        android:paddingLeft="17dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/dialog_favorite_length_check"
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/nanum_square"
+        android:text="두 항목 모두 3자 이상 입력해주세요."
+        android:textColor="@color/gray"
+        android:textSize="11sp" />
+
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="right"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialog_favorite_cancel"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:fontFamily="@font/nanum_square_eb"
+            android:text="취소"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/dialog_favorite_insert"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:fontFamily="@font/nanum_square_eb"
+            android:text="확인"
+            android:textColor="@color/darkgreen" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -2,12 +2,15 @@ package com.dongyang.android.boda.Riding.Map;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -31,13 +34,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongyang.android.boda.Introduction.Model.CheckSuccess;
 import com.dongyang.android.boda.Riding.Map.Marker.BikeRenderer;
 import com.dongyang.android.boda.Riding.Map.Model.Bike.BikeItem;
 import com.dongyang.android.boda.Riding.Map.Model.Bike.RentBikeStatus;
@@ -68,6 +75,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
@@ -89,8 +97,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class MapFragment extends Fragment
         implements OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback,
-        ClusterManager.OnClusterItemClickListener<BikeItem> {
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private MapView mapView = null;
     private GoogleMap mMap;
@@ -142,10 +149,15 @@ public class MapFragment extends Fragment
     private TextView bottomRackTotCnt, bottomParkingBikeTotCnt, bottomStationName, bike_distance, bike_avg_speed;
     private Chronometer bike_timer;
 
-    private ImageButton bikeMeasurement, bikeMyLocation;
+    private ImageButton bikeMeasurement, bikeMyLocation, bikeRefresh;
     private ImageButton bike_measurement_start, bike_measurement_stop, bike_measurement_reset;
     private AlertDialog.Builder dialog;
     private boolean bikeON = false;
+
+    private Dialog favoriteDialog;
+
+
+    MarkerManager.Collection normalMarkerCollection;
 
 
     // 스탑 워치
@@ -172,9 +184,13 @@ public class MapFragment extends Fragment
     private String f_lat = "";
     private String f_long = "";
     private String f_time = "";
-    
+
     // 즐겨찾기
     private ImageButton bikeFavorite;
+
+    // 유저 아이디를 담을 변수
+    private String userId;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -201,6 +217,7 @@ public class MapFragment extends Fragment
         bikeMeasurementBottomSheet = mapLayout.findViewById(R.id.map_measurement_bottomSheet);
         bikeMeasurement = (ImageButton) mapLayout.findViewById(R.id.map_measurement_btn);
         bikeMyLocation = mapLayout.findViewById(R.id.map_my_location_btn);
+        bikeRefresh = mapLayout.findViewById(R.id.map_refresh_btn);
         bike_avg_speed = mapLayout.findViewById(R.id.map_avg_speed);
         bike_distance = mapLayout.findViewById(R.id.map_distance);
         bike_timer = mapLayout.findViewById(R.id.map_timer);
@@ -228,6 +245,9 @@ public class MapFragment extends Fragment
         mapView.getMapAsync(this);
         // 지도 객체를 사용할 수 있을 때 onMapReady() 함수가 자동 호출되며 매개변수로 GoogleMap 객체가 전달된다.
 
+
+        // 메인 액티비티로부터 유저 아이디를 받아온다.
+        userId = getArguments().getString("userId");
 
         return mapLayout;
     }
@@ -262,6 +282,11 @@ public class MapFragment extends Fragment
             bikeMyLocation.setVisibility(View.VISIBLE);
             bikeMeasurement.setVisibility(View.VISIBLE);
             bikeFavorite.setVisibility(View.VISIBLE);
+            bikeRefresh.setVisibility(View.VISIBLE);
+            if (currentPosition != null) {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
+                mMap.moveCamera(cameraUpdate);
+            }
 
 
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
@@ -276,7 +301,7 @@ public class MapFragment extends Fragment
                     @Override
                     public void onClick(View view) {
                         // 3-3. 사용자에게 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                        requestPermissions(REQUIRED_PERMISSIONS,PERMISSIONS_REQUEST_CODE);
+                        requestPermissions(REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
 
 //                        ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
 //                                PERMISSIONS_REQUEST_CODE);
@@ -287,14 +312,12 @@ public class MapFragment extends Fragment
             } else {
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                requestPermissions(REQUIRED_PERMISSIONS,PERMISSIONS_REQUEST_CODE);
+                requestPermissions(REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
 //                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS,
 //                        PERMISSIONS_REQUEST_CODE);
             }
 
         }
-
-
 
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false); // 로케이션 버튼 활성화
@@ -313,6 +336,14 @@ public class MapFragment extends Fragment
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), FavoriteActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        bikeRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.clear();
+                onMapReady(mMap);
             }
         });
 
@@ -336,32 +367,53 @@ public class MapFragment extends Fragment
                     bikeBottomSheet.setVisibility(View.GONE);
                     if (clickMarker != null) clickMarker.remove(); // 지난번 위치의 마커가 있다면 지운다.
 
-                    String markerTitle = getCurrentAddress(point);
-                    String markerSnippet = "위도:" + point.latitude
-                            + " 경도:" + String.valueOf(point.longitude);
+//                    String markerTitle = getCurrentAddress(point);
+//                    String markerSnippet = "위도:" + point.latitude
+//                            + " 경도:" + String.valueOf(point.longitude);
 
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(point);
-                    markerOptions.title(markerTitle);
-                    markerOptions.snippet(markerSnippet);
-                    markerOptions.draggable(true);
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    clickMarker = mMap.addMarker(markerOptions);
+
+                    MarkerOptions ridingStart = new MarkerOptions();
+                    ridingStart.position(currentPosition);
+                    ridingStart.title("기록 측정 시작지점");
+                    ridingStart.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_start_marker)));
+                    ridingStartMarker = mMap.addMarker(ridingStart);
+
+                    MarkerOptions click = new MarkerOptions();
+                    click.position(point);
+                    click.title("클릭하면 즐겨찾는 장소로 저장이 가능해요!");
+                    click.draggable(true);
+                    click.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_click_marker)));
+                    // clickMarker = mMap.addMarker(click);
+                    clickMarker = normalMarkerCollection.addMarker(click);
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(point); // 현재 좌표 지정
                     mMap.moveCamera(cameraUpdate); // 현재 좌표로 이동
                     Log.d(TAG, "onMapClick :");
                 }
             });
 
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            getFavoriteLocation();
+            getBikeAPI();
+
+
+            normalMarkerCollection = mClusterManager.getMarkerManager().newCollection();
+            normalMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
-                public boolean onMarkerClick(Marker marker) {
+                public boolean onMarkerClick(@NonNull Marker marker) {
+                    if (marker.getTitle().equals("클릭하면 즐겨찾는 장소로 저장이 가능해요!")) {
+
+                        // 즐겨찾기 커스텀 다이얼로그 설정
+                        favoriteDialog = new Dialog(getActivity());
+                        favoriteDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // 타이틀 제거
+                        favoriteDialog.setContentView(R.layout.dialog_map_favorite); // 레이아웃 파일과 연결
+
+                        favoriteDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        favoriteDialog.show();
+                        showFavoriteDialog();
+                    }
                     return false;
                 }
             });
 
-            getFavoriteLocation();
-            getBikeAPI();
         } else {
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
@@ -691,7 +743,7 @@ public class MapFragment extends Fragment
         super.onPause();
         mapView.onPause();
 
-        Log.d(TAG,"onPause");
+        Log.d(TAG, "onPause");
     }
 
     @Override
@@ -699,7 +751,7 @@ public class MapFragment extends Fragment
         super.onResume();
         mapView.onResume();
 
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
     }
 
     @Override
@@ -804,10 +856,13 @@ public class MapFragment extends Fragment
 
     public void getFavoriteLocation() {
         Log.d("Favorite", "START");
-        String id = getArguments().getString("userId");
 
+        //  통신 시 json 사용과 해당 객체로의 파싱을 위해 생성,
+        //  이 부분이 없을 시 IllegalArgumentException 발생 함
         Gson gson = new GsonBuilder().setLenient().create();
 
+
+        // Retrofit2 시작
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FavoriteService.FAVORITE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -815,7 +870,7 @@ public class MapFragment extends Fragment
 
         FavoriteService retrofitAPI = retrofit.create(FavoriteService.class);
 
-        retrofitAPI.getFavorite("select", id).enqueue(new Callback<List<Favorite>>() {
+        retrofitAPI.getFavorite(userId).enqueue(new Callback<List<Favorite>>() {
             @Override
             public void onResponse(Call<List<Favorite>> call, retrofit2.Response<List<Favorite>> response) {
                 if (response.isSuccessful()) {
@@ -852,17 +907,31 @@ public class MapFragment extends Fragment
     }
 
 
-
     public void getBikeAPI() {
 
         Log.d("getBikeAPI", "START");
 
         mClusterManager = new ClusterManager<BikeItem>(getActivity(), mMap);
         mClusterManager.setRenderer(new BikeRenderer(getActivity(), mMap, mClusterManager));
-        mClusterManager.setOnClusterItemClickListener(this);
+
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BikeItem>() {
+            @Override
+            public boolean onClusterItemClick(BikeItem bikeItem) {
+                Log.d("Cluster Click", "START");
+
+                bottomStationName = getView().findViewById(R.id.map_detail_stationName);
+
+                bottomStationName.setText(bikeItem.getStationName());
+                bikeBottomSheet.setVisibility(View.VISIBLE);
+                if (clickMarker != null) {
+                    clickMarker.remove();
+                }
+                return false;
+            }
+        });
 
         mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager.getMarkerManager());
 
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -910,25 +979,26 @@ public class MapFragment extends Fragment
         });
 
 
-
-
     }
 
-    @Override
-    public boolean onClusterItemClick(BikeItem bikeItem) {
-        Log.d("Cluster Click", "START");
-
-
-        bottomStationName = getView().findViewById(R.id.map_detail_stationName);
-
-        bottomStationName.setText(bikeItem.getStationName());
-        bikeBottomSheet.setVisibility(View.VISIBLE);
-
-//        bikeBottomSheetDialog modalbikeBottomSheet = new bikeBottomSheetDialog(this);
-//        modalbikeBottomSheet.setContentView(view);
-//        modalbikeBottomSheet.show();
-        return false;
-    }
+//    @Override
+//    public boolean onClusterItemClick(BikeItem bikeItem) {
+//        Log.d("Cluster Click", "START");
+//
+//
+//
+//        bottomStationName = getView().findViewById(R.id.map_detail_stationName);
+//
+//        bottomStationName.setText(bikeItem.getStationName());
+//        bikeBottomSheet.setVisibility(View.VISIBLE);
+//        if (clickMarker != null) {
+//            clickMarker.remove();
+//        }
+////        bikeBottomSheetDialog modalbikeBottomSheet = new bikeBottomSheetDialog(this);
+////        modalbikeBottomSheet.setContentView(view);
+////        modalbikeBottomSheet.show();
+//        return false;
+//    }
 
 
     //여기부터는 런타임 퍼미션 처리을 위한 메소드들
@@ -1120,8 +1190,6 @@ public class MapFragment extends Fragment
     }
 
 
-
-
     // xml -> bitmap
     private Bitmap createDrawableFromView(Context context, View view) {
 
@@ -1137,5 +1205,73 @@ public class MapFragment extends Fragment
         view.draw(canvas);
 
         return bitmap;
+    }
+
+    // 즐겨찾기 등록 다이얼로그 기능 부여
+    public void showFavoriteDialog() {
+
+
+        EditText dialog_favorite_title, dialog_favorite_content;
+        Button dialog_favorite_cancel, dialog_favorite_insert;
+        TextView dialog_favorite_length_check;
+
+        dialog_favorite_title = favoriteDialog.findViewById(R.id.dialog_favorite_title);
+        dialog_favorite_content = favoriteDialog.findViewById(R.id.dialog_favorite_content);
+        dialog_favorite_cancel = favoriteDialog.findViewById(R.id.dialog_favorite_cancel);
+        dialog_favorite_insert = favoriteDialog.findViewById(R.id.dialog_favorite_insert);
+        dialog_favorite_length_check = favoriteDialog.findViewById(R.id.dialog_favorite_length_check);
+
+        dialog_favorite_insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                double setFavoriteLat = clickMarker.getPosition().latitude;
+                double setFavoriteLong = clickMarker.getPosition().longitude;
+                String setFavoriteTitle = dialog_favorite_title.getText().toString();
+                String setFavoriteContent = dialog_favorite_content.getText().toString();
+
+
+                if (setFavoriteTitle.length() < 3 || setFavoriteContent.length() < 3) {
+
+                    dialog_favorite_length_check.setTextColor(Color.RED);
+                } else {
+
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(FavoriteService.FAVORITE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+                    FavoriteService retrofitAPI = retrofit.create(FavoriteService.class);
+
+                    retrofitAPI.insertFavorite(userId, setFavoriteLat, setFavoriteLong, setFavoriteTitle, setFavoriteContent).enqueue(new Callback<CheckSuccess>() {
+                        @Override
+                        public void onResponse(Call<CheckSuccess> call, retrofit2.Response<CheckSuccess> response) {
+                            if (response.isSuccessful()) {
+                                Log.d("Favorite", "Response");
+                                Toast.makeText(getActivity(), "성공적으로 추가됐어요! 좌측 상단의 새로고침을 눌러보세요.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<CheckSuccess> call, Throwable t) {
+                            t.printStackTrace();
+                            Toast.makeText(getActivity(), "알 수 없는 이유로 실패했어요.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    favoriteDialog.dismiss();
+                }
+            }
+        });
+
+        dialog_favorite_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favoriteDialog.dismiss();
+            }
+        });
+
+
     }
 }

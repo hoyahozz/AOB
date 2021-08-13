@@ -21,11 +21,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="17dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/nanum_barun_gothic_light"
+        android:fontFamily="@font/nanum_barun_gothic"
         android:text="오늘도 즐겁게 라이딩해볼까요?"
-        android:textColor="@color/black"
+        android:textColor="@color/gray"
         android:textSize="16sp" />
 
 </LinearLayout>
