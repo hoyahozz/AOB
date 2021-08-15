@@ -371,13 +371,6 @@ public class MapFragment extends Fragment
 //                    String markerSnippet = "위도:" + point.latitude
 //                            + " 경도:" + String.valueOf(point.longitude);
 
-
-                    MarkerOptions ridingStart = new MarkerOptions();
-                    ridingStart.position(currentPosition);
-                    ridingStart.title("기록 측정 시작지점");
-                    ridingStart.icon(BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_start_marker)));
-                    ridingStartMarker = mMap.addMarker(ridingStart);
-
                     MarkerOptions click = new MarkerOptions();
                     click.position(point);
                     click.title("클릭하면 즐겨찾는 장소로 저장이 가능해요!");
@@ -1048,6 +1041,7 @@ public class MapFragment extends Fragment
                 bikeMyLocation.setVisibility(View.VISIBLE);
                 bikeMeasurement.setVisibility(View.VISIBLE);
                 bikeFavorite.setVisibility(View.VISIBLE);
+                bikeRefresh.setVisibility(View.VISIBLE);
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])

@@ -14,9 +14,9 @@ import retrofit2.http.Part;
 
 public interface SendService {
 
-    String SEND_URL = "http://dmuel.duckdns.org/";
+    String SEND_URL = "http://dmuel.duckdns.org";
 
     @Multipart
-    @POST("bicycle")
+    @POST("/bicycle")
     Call<Result> sendImage(@Part MultipartBody.Part file);
 }

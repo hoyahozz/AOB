@@ -63,7 +63,6 @@ public class FavoriteAdapter
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, fnum + "(fnum) 클릭하였음.", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(context);
                 dialog.setMessage("즐겨찾기를 삭제하시겠습니까?");

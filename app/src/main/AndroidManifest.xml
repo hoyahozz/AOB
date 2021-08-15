@@ -33,7 +33,7 @@
         android:theme="@style/Theme.BODA"
         android:usesCleartextTraffic="true">
         <activity android:name=".User.FavoriteActivity"></activity>
-        <activity android:name=".YoutubeActivity" />
+        <activity android:name=".Repair.YoutubeActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

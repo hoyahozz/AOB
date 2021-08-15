@@ -28,7 +28,6 @@ import android.widget.Toast;
 import com.dongyang.android.boda.R;
 import com.dongyang.android.boda.Repair.Model.Result;
 import com.dongyang.android.boda.Repair.Service.SendService;
-import com.dongyang.android.boda.YoutubeActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -191,10 +190,9 @@ public class RepairFragment extends Fragment {
 
             sendImg(file);
 
-            // Toast.makeText(this.getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(this.getActivity(), YoutubeActivity.class);
-            // startActivity(intent);
-
+//             Toast.makeText(this.getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
+//             Intent intent = new Intent(this.getActivity(), YoutubeActivity.class);
+//             startActivity(intent);
 
 
         } catch (Exception e) {
@@ -203,21 +201,24 @@ public class RepairFragment extends Fragment {
         }
     }
 
-    // 파일을 라떼판다 서버로 보내는 형식
+    // 파일을 라떼판다 서버로 보낸다.
     private void sendImg(File file) {
 
-        Log.d(TAG,file.toString());
-        Log.d(TAG,file.getName());
+        Log.d(TAG, file.toString());
+        Log.d(TAG, file.getName());
 
-        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file",file.getName(),fileBody);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file); // 파일을 보낼 때 리퀘스트바디를 사용함.
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
+        // 파일 변수명, 파일의 이름(여기서는 file.jpg), 파일 경로 설정
 
+        // 통신 시간을 최대 30초씩으로 설정
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build();
 
+        // Retrofit 설정
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(SendService.SEND_URL)
                 .client(okHttpClient)
@@ -226,17 +227,21 @@ public class RepairFragment extends Fragment {
 
         SendService sendAPI = retrofit.create(SendService.class);
 
+        // filepart를 매개변수로 딥 러닝 서버로 전송
         sendAPI.sendImage(filePart).enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
-                Log.d("Register", "Success");
                 if (response.isSuccessful()) { // 성공적으로 받아왔을 때
-                    Result result = response.body();
-                    Log.d("Register",result.getResult());
+                    Result result = response.body(); // 결과값을 result에 저장
+                    Log.d(TAG, result.getResult());
+
+                    // 결과값이 성공적으로 받아와졌으므로, 유튜브 액티비티로 이동한다.
                     Toast.makeText(getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), YoutubeActivity.class);
+                    intent.putExtra("result", result.getResult()); // 결과값에 따라 유튜브 검색값을 입력해야 하기 때문에, 유튜브 액티비티로 데이터를 전송한다.
+                    Log.d("Register", result.getResult());
                     startActivity(intent);
-                } else {
+                } else { // 사진을 서버에서 인식하지 못했을 때
                     Toast.makeText(getActivity(), "사진을 인식하지 못했어요! 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -260,7 +265,7 @@ public class RepairFragment extends Fragment {
 
 
             // 데이터베이스 (비트맵 형태로 데이터베이스 접속할 때)
-   //         String image = bitmapToByteAray(bitmap);
+            //         String image = bitmapToByteAray(bitmap);
             ivCapture.setImageBitmap(bitmap);
         } catch (Exception e) {
             Log.w(TAG, "Capture loading Error", e);

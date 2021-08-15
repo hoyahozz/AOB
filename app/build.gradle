@@ -63,6 +63,8 @@ dependencies {
         // workaround issue #73
         exclude group: 'com.google.android', module: 'android'
     }
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     testImplementation 'junit:junit:4.+'
