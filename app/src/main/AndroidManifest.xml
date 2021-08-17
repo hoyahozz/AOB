@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dongyang.android.boda">
+    package="com.dongyang.android.aob">
 
-    <uses-permission android:name="com.dongyang.android.boda.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.dongyang.android.aob.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 권한 선언 -->
     <!-- 구글맵 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- WiFI 또는 모바일 데이터를 바탕으로 기기위치 파악할 수 있게 해줌 -->
@@ -30,14 +30,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BODA"
+        android:theme="@style/Theme.AOB"
         android:usesCleartextTraffic="true">
-        <activity android:name=".User.FavoriteActivity"></activity>
+        <activity android:name=".User.InfoActivity"></activity>
+        <activity android:name=".Riding.Safety.SafeActivity" />
+        <activity android:name=".User.FavoriteActivity" />
         <activity android:name=".Repair.YoutubeActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBWkLZrAIKRiM4gwNqc0am8Jdy0ZO0OGRQ" />
+            android:value="${GOOGLE_API_KEY}" />
 
         <activity
             android:name=".Main.MainActivity"

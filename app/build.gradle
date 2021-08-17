@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 repositories {
     jcenter()
 }
@@ -11,13 +14,18 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.dongyang.android.boda"
+        applicationId "com.dongyang.android.aob"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "GOOGLE_API_KEY", properties['google_api_key']
+        manifestPlaceholders = [GOOGLE_API_KEY: google_api_key]
+        buildConfigField "String", "SERVER", properties['raspberry_server']
+        buildConfigField "String", "SEOUL_API_KEY", properties['seoul_api_key']
+        buildConfigField "String", "DEEP_RUNNING_SERVER", properties['deep_running_server']
     }
 
     buildTypes {
@@ -64,7 +72,10 @@ dependencies {
         exclude group: 'com.google.android', module: 'android'
     }
     implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.3'
     testImplementation 'junit:junit:4.+'

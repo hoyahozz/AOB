@@ -21,6 +21,26 @@
             android:textColor="@color/white"
             android:textSize="35sp"/>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/main_user_info"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="15dp"
+            android:layout_gravity ="right"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:cardCornerRadius="75dp">
+
+            <ImageView
+                android:id="@+id/roundedimage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/item_user_image"/>
+        </androidx.cardview.widget.CardView>
+
 <!--
         <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="45dp"
