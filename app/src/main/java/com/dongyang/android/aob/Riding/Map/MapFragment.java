@@ -115,8 +115,8 @@ public class MapFragment extends Fragment
 
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
-    private static final int UPDATE_INTERVAL_MS = 1000;  // 1초
-    private static final int FASTEST_UPDATE_INTERVAL_MS = 500; // 0.5초
+    private static final int UPDATE_INTERVAL_MS = 3000;  // 3초
+    private static final int FASTEST_UPDATE_INTERVAL_MS = 2500; // 2.5초
 
     private Handler mHandler; // 소켓 통신 핸들러
     private Socket socket;
@@ -664,7 +664,7 @@ public class MapFragment extends Fragment
                     sum_dist += dist;
                     Log.d("sum_dist", String.valueOf(sum_dist));
                     // 평균 속도 계산
-                    avg_speed = dist / timer;
+                    avg_speed = sum_dist / timer;
                     avg_speed = (int) (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
                     Log.d("avg_speed", String.valueOf(avg_speed));
                     bef_lat = cur_lat;

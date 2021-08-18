@@ -64,23 +64,32 @@ public class InfoActivity extends AppCompatActivity {
         /*
         user_cardView = findViewById(R.id.info_user_cardView);
         user_profile = findViewById(R.id.info_user_profile);
-        // Load an image using Picasso library
-        Picasso.with(getApplicationContext())
-                .load(R.drawable.item_user_image)
-                .into(user_profile);
 
         // Load an image using Glide library
         Glide.with(getApplicationContext())
                 .load(R.drawable.item_user_image)
                 .into(user_profile);
          */
+
+
     }
 
     public void logout() {
         editor.clear();
+        editor.commit();
         Intent intent = new Intent(InfoActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // 상위 액티비티 모두 종료
         startActivity(intent);
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: // 뒤로가기 버튼 눌렀을 때 종료
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

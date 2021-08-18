@@ -216,11 +216,11 @@ public class RepairFragment extends Fragment {
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         // 파일 변수명, 파일의 이름(여기서는 file.jpg), 파일 경로 설정
 
-        // 통신 시간을 최대 30초씩으로 설정
+        // 통신 시간을 최대 15초씩으로 설정
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(15, TimeUnit.MINUTES)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
                 .build();
 
         // Retrofit 설정
