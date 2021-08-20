@@ -149,6 +149,8 @@ public class MapFragment extends Fragment
     // 따릉이 커스텀 마커 설정
     private View bikeMarkerLayout;
     private TextView bike_detail;
+    private int seoulBike = 0;
+    private Button seoulBike_controller;
 
     private TextView bottomRackTotCnt, bottomParkingBikeTotCnt, bottomStationName, bike_distance, bike_avg_speed;
     private Chronometer bike_timer;
@@ -232,6 +234,7 @@ public class MapFragment extends Fragment
         bikeFavorite = mapLayout.findViewById(R.id.map_my_favortie_btn);
         bikeBottomSheet.setVisibility(View.GONE);
         loadingDialog = new LoadingDialog(this.getActivity());
+        seoulBike_controller = mapLayout.findViewById(R.id.map_seoulBike_controller);
 
         locationRequest = new LocationRequest() // 위치를 요청한다
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // 정확도 조절
@@ -291,7 +294,7 @@ public class MapFragment extends Fragment
             bikeFavorite.setVisibility(View.VISIBLE);
             bikeRefresh.setVisibility(View.VISIBLE);
             if (currentPosition != null) {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 13);
                 mMap.moveCamera(cameraUpdate);
             }
 
@@ -329,6 +332,26 @@ public class MapFragment extends Fragment
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false); // 로케이션 버튼 활성화
 
+        mClusterManager = new ClusterManager<BikeItem>(getActivity(), mMap); // 클러스터링 마커 설정
+        mClusterManager.setRenderer(new BikeRenderer(getActivity(), mMap, mClusterManager));
+
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BikeItem>() {
+            @Override
+            public boolean onClusterItemClick(BikeItem bikeItem) { // 클러스터 마커 클릭했을 때 이벤트
+                bottomStationName = getView().findViewById(R.id.map_detail_stationName);
+
+                bottomStationName.setText(bikeItem.getStationName());
+                bikeBottomSheet.setVisibility(View.VISIBLE);
+                if (clickMarker != null) {
+                    clickMarker.remove();
+                }
+                return false;
+            }
+        });
+
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager.getMarkerManager());
+
         bikeMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -354,16 +377,25 @@ public class MapFragment extends Fragment
             }
         });
 
-//        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-//            @Override
-//            public boolean onMyLocationButtonClick() { // 로케이션 버튼을 눌렀을 때
-//                bikeBottomSheet.setVisibility(View.GONE);
-//                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); // 현재 좌표 지정
-//                mMap.moveCamera(cameraUpdate); // 현재 좌표로 이동
-//                // connect();
-//                return true;
-//            }
-//        });
+
+
+        seoulBike_controller.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (seoulBike == 0) {
+                    seoulBike_controller.setTextColor(0xFF46b95b);
+                    getBikeAPI();
+                    setDefaultLocation();
+                    seoulBike = 1;
+                } else {
+                    mClusterManager.clearItems();
+                    seoulBike = 0;
+                    seoulBike_controller.setTextColor(Color.BLACK);
+                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                }
+            }
+        });
 
         if (bikeON == false) { // ★ 라이딩 측정 모드가 꺼져있을 때만 다른 마커를 활성화시킨다. ★
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -391,8 +423,8 @@ public class MapFragment extends Fragment
                 }
             });
 
+            // getBikeAPI();
             getFavoriteLocation();
-            getBikeAPI();
 
 
             normalMarkerCollection = mClusterManager.getMarkerManager().newCollection();
@@ -914,26 +946,25 @@ public class MapFragment extends Fragment
 
         Log.d("getBikeAPI", "START");
 
-        mClusterManager = new ClusterManager<BikeItem>(getActivity(), mMap); // 클러스터링 마커 설정
-        mClusterManager.setRenderer(new BikeRenderer(getActivity(), mMap, mClusterManager));
-
-        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BikeItem>() {
-            @Override
-            public boolean onClusterItemClick(BikeItem bikeItem) { // 클러스터 마커 클릭했을 때 이벤트
-                bottomStationName = getView().findViewById(R.id.map_detail_stationName);
-
-                bottomStationName.setText(bikeItem.getStationName());
-                bikeBottomSheet.setVisibility(View.VISIBLE);
-                if (clickMarker != null) {
-                    clickMarker.remove();
-                }
-                return false;
-            }
-        });
+//        mClusterManager = new ClusterManager<BikeItem>(getActivity(), mMap); // 클러스터링 마커 설정
+//        mClusterManager.setRenderer(new BikeRenderer(getActivity(), mMap, mClusterManager));
+//
+//        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<BikeItem>() {
+//            @Override
+//            public boolean onClusterItemClick(BikeItem bikeItem) { // 클러스터 마커 클릭했을 때 이벤트
+//                bottomStationName = getView().findViewById(R.id.map_detail_stationName);
+//
+//                bottomStationName.setText(bikeItem.getStationName());
+//                bikeBottomSheet.setVisibility(View.VISIBLE);
+//                if (clickMarker != null) {
+//                    clickMarker.remove();
+//                }
+//                return false;
+//            }
+//        });
 
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager.getMarkerManager());
-
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BikeService.SEOUL_URL)

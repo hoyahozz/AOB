@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="170dp"
         android:layout_marginTop="30dp"
-        android:src="@drawable/logo_main" />
+        android:src="@drawable/logo_aob" />
 
     <TextView
         android:layout_width="350dp"
