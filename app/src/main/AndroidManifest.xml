@@ -9,12 +9,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 위치 데이터를 바탕으로 최대한 정확하게 위치를 파악할 수 있게 한다. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 구글 play-services 내부적으로 구글 서버와 연동하기 위한 퍼미션 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- play-services 라이브러리에서 구글 서버의 콘텐츠를 외부 메모리 공간에 캐싱 개념으로 저장, 사용하기 위해 필요한 퍼미션 -->
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" /> <!-- 아고라 -->
+    <!-- 아고라 -->
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 자가 수리 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!-- 자가 수리 -->
     <!-- Camera 기능 및 내/외부 저장소에 저장 할 수 있도록 권한설정 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

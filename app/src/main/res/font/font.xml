@@ -13,17 +13,9 @@
         android:fontWeight="400"
         android:font="@font/nanum_barun_gothic"/>
 
-    <font android:fontStyle="normal"
-        android:fontWeight="400"
-        android:font="@font/nanum_barun_gothic_light"/>
 
     <font android:fontStyle="normal"
         android:fontWeight="400"
         android:font="@font/arial"/>
-
-    <font android:fontStyle="normal"
-        android:fontWeight="400"
-        android:font="@font/malgunbd"/>
-
 
 </font-family>
