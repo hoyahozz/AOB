@@ -29,6 +29,7 @@
             android:fontFamily="@font/nanum_square_eb"
             android:textSize="10sp"
             android:textColor="@color/gray"
+            android:visibility="gone"
             android:text="따릉이" />
 
         <ImageButton

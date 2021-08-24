@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         bundle = new Bundle();
         bundle.putString("userName", userName);
         bundle.putString("userId",userId);
+
 
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
@@ -215,5 +217,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void replaceFragment() { // 홈 프래그먼트에서 버튼을 눌렀을 때 맵으로 이동할 수 있게끔 설정
+        main_bnv.getMenu().findItem(R.id.navigation_ride).setChecked(true);
+        MapFragment ridingFragment = new MapFragment();
+        bundle.putBoolean("bikeON", true);
+        ridingFragment.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_container, ridingFragment, "riding").commit();
     }
 }

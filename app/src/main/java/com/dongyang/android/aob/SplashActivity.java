@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.dongyang.android.aob.Introduction.Activity.LoginActivity;
 import com.dongyang.android.aob.Main.MainActivity;
@@ -22,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = pref.edit();
         Boolean autoLogin = pref.getBoolean("autoLogin", false);
 
-        new Handler().postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
 

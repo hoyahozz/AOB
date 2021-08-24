@@ -120,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else { // 로그인 상태 유지 체크가 안되어 있다면
                                         user_info_editor.putBoolean("autoLogin",false); // 자동 로그인 여부를 false
+                                        user_info_editor.commit();
+
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
                                         finish();

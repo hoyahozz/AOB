@@ -113,7 +113,7 @@ public class MapFragment extends Fragment
     private Marker ridingEndMarker = null;
     private ClusterManager<BikeItem> mClusterManager; // 클러스터 매니저, 커스텀 마커
 
-    private static final String TAG = "googlemap_example";
+    private static final String TAG = "MapFragment";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int UPDATE_INTERVAL_MS = 3000;  // 3초
     private static final int FASTEST_UPDATE_INTERVAL_MS = 2500; // 2.5초
@@ -257,6 +257,9 @@ public class MapFragment extends Fragment
         // 메인 액티비티로부터 유저 아이디를 받아온다.
         userId = getArguments().getString("userId");
 
+        bikeON = getArguments().getBoolean("bikeON");
+        Log.d(TAG,String.valueOf(bikeON));
+
         return mapLayout;
     }
 
@@ -264,7 +267,6 @@ public class MapFragment extends Fragment
     public void onMapReady(final GoogleMap googleMap) {
         Log.d(TAG, "onMapReady :");
 
-        loadingDialog.show();
 
         dialog = new AlertDialog.Builder(this.getActivity());
 
@@ -289,14 +291,7 @@ public class MapFragment extends Fragment
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
 
             startLocationUpdates(); // 3. 위치 업데이트 시작
-            bikeMyLocation.setVisibility(View.VISIBLE);
-            bikeMeasurement.setVisibility(View.VISIBLE);
-            bikeFavorite.setVisibility(View.VISIBLE);
-            bikeRefresh.setVisibility(View.VISIBLE);
-            if (currentPosition != null) {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 13);
-                mMap.moveCamera(cameraUpdate);
-            }
+            ButtonVisibility(1);
 
 
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
@@ -305,7 +300,7 @@ public class MapFragment extends Fragment
             if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])) {
 
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.",
+                Snackbar.make(mLayout, "맵 기능을 실행하려면 위치 접근 권한이 필요해요!",
                         Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                     @Override
@@ -330,6 +325,7 @@ public class MapFragment extends Fragment
         }
 
 
+
         mMap.getUiSettings().setMyLocationButtonEnabled(false); // 로케이션 버튼 활성화
 
         mClusterManager = new ClusterManager<BikeItem>(getActivity(), mMap); // 클러스터링 마커 설정
@@ -352,7 +348,7 @@ public class MapFragment extends Fragment
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager.getMarkerManager());
 
-        bikeMyLocation.setOnClickListener(new View.OnClickListener() {
+        bikeMyLocation.setOnClickListener(new View.OnClickListener() { // 현재 내 위치 버튼
             @Override
             public void onClick(View view) {
                 bikeBottomSheet.setVisibility(View.GONE);
@@ -361,7 +357,7 @@ public class MapFragment extends Fragment
             }
         });
 
-        bikeFavorite.setOnClickListener(new View.OnClickListener() {
+        bikeFavorite.setOnClickListener(new View.OnClickListener() { // 즐겨찾기 버튼
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), FavoriteActivity.class);
@@ -369,7 +365,7 @@ public class MapFragment extends Fragment
             }
         });
 
-        bikeRefresh.setOnClickListener(new View.OnClickListener() {
+        bikeRefresh.setOnClickListener(new View.OnClickListener() { // 새로고침 버튼
             @Override
             public void onClick(View view) {
                 mMap.clear();
@@ -377,27 +373,28 @@ public class MapFragment extends Fragment
             }
         });
 
+        if (seoulBike == 1) {
+            getBikeAPI();
+        }
 
-
-        seoulBike_controller.setOnClickListener(new View.OnClickListener() {
+        seoulBike_controller.setOnClickListener(new View.OnClickListener() { // 따릉이 버튼
             @Override
             public void onClick(View view) {
-
-                if (seoulBike == 0) {
+                if (seoulBike == 0) { // 따릉이 보기 버튼 꺼져있을 때 누르면
                     seoulBike_controller.setTextColor(0xFF46b95b);
                     getBikeAPI();
                     setDefaultLocation();
                     seoulBike = 1;
-                } else {
+                } else { // 따릉이 보기 버튼 켜져있을 때 누르면
                     mClusterManager.clearItems();
+                    seoulBike_controller.setTextColor(0xFF5a6a72);
                     seoulBike = 0;
-                    seoulBike_controller.setTextColor(Color.BLACK);
                     mMap.animateCamera(CameraUpdateFactory.zoomIn());
                 }
             }
         });
 
-        if (bikeON == false) { // ★ 라이딩 측정 모드가 꺼져있을 때만 다른 마커를 활성화시킨다. ★
+        if (bikeON == false) { // ★ 측정 모드가 꺼져있을 때만 다른 마커들 비활성화 ★
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
@@ -459,6 +456,28 @@ public class MapFragment extends Fragment
 
         // 자전거 속도 측정 모드
 
+        if (bikeON == true) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ButtonVisibility(0);
+                    bef_lat = mCurrentLocation.getLatitude();
+                    bef_long = mCurrentLocation.getLongitude();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(1000);
+                    // 아이콘 변경
+                    bikeMeasurement.setImageResource(R.drawable.ic_riding_on);
+                    bikeMeasurementBottomSheet.setVisibility(View.VISIBLE);
+                    bikeMeasurementBottomSheet.setAnimation(animation);
+                    // 현 위치로 이동
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
+                    mMap.moveCamera(cameraUpdate);
+                }
+            }, 1500);
+        }
+
+
         bikeMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -478,6 +497,8 @@ public class MapFragment extends Fragment
                             mMap.clear();
                             mClusterManager.clearItems();
                             bikeBottomSheet.setVisibility(View.GONE);
+                            seoulBike = 0;
+                            seoulBike_controller.setTextColor(0xFF5a6a72);
 
                             Animation animation = new AlphaAnimation(0, 1);
                             animation.setDuration(1000);
@@ -486,8 +507,7 @@ public class MapFragment extends Fragment
                             onMapReady(mMap);
                             bef_lat = mCurrentLocation.getLatitude();
                             bef_long = mCurrentLocation.getLongitude();
-                            // 아이콘 변경
-                            bikeMeasurement.setImageResource(R.drawable.ic_riding_on);
+                            bikeMeasurement.setImageResource(R.drawable.ic_riding_on); // 아이콘 변경
                             bikeMeasurementBottomSheet.setVisibility(View.VISIBLE);
                             bikeMeasurementBottomSheet.setAnimation(animation);
                             // 현 위치로 이동
@@ -638,8 +658,6 @@ public class MapFragment extends Fragment
 
         // 자전거 속도 측정 모드 끝
 
-        loadingDialog.dismiss();
-
     }
 
 
@@ -696,8 +714,12 @@ public class MapFragment extends Fragment
                     sum_dist += dist;
                     Log.d("sum_dist", String.valueOf(sum_dist));
                     // 평균 속도 계산
-                    avg_speed = sum_dist / timer;
-                    avg_speed = (int) (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
+                    if (timer != 0) {
+                        avg_speed = sum_dist / timer;
+                        avg_speed = (int) (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
+                    } else {
+                        avg_speed = 0;
+                    }
                     Log.d("avg_speed", String.valueOf(avg_speed));
                     bef_lat = cur_lat;
                     bef_long = cur_long;
@@ -1161,7 +1183,7 @@ public class MapFragment extends Fragment
 
 
     void connect() { // 소켓 연결하는 부분
-        mHandler = new Handler();
+        mHandler = new Handler(Looper.getMainLooper());
         Log.w("connect", "연결 하는중");
         final String location = "location " + String.valueOf(currentPosition); // 현재 위치
 
@@ -1306,5 +1328,22 @@ public class MapFragment extends Fragment
         });
 
 
+    }
+
+    public void ButtonVisibility(int visible) {
+
+        if (visible == 1) {
+            bikeMyLocation.setVisibility(View.VISIBLE);
+            bikeMeasurement.setVisibility(View.VISIBLE);
+            bikeFavorite.setVisibility(View.VISIBLE);
+            bikeRefresh.setVisibility(View.VISIBLE);
+            seoulBike_controller.setVisibility(View.VISIBLE);
+        } else {
+            bikeMyLocation.setVisibility(View.GONE);
+            bikeFavorite.setVisibility(View.GONE);
+            bikeRefresh.setVisibility(View.GONE);
+            seoulBike_controller.setVisibility(View.GONE);
+
+        }
     }
 }
