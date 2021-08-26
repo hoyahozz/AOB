@@ -42,11 +42,15 @@ public class MainActivity extends AppCompatActivity {
     private String userName, userId;
     private Bundle bundle;
     private CardView userInfo;
+    private int value; // (0이면 메인으로 초기화면, 1이면 맵으로 초기화면 지정)
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        value = 0;
 
         main_bnv = findViewById(R.id.main_bnv);
         userInfo = findViewById(R.id.main_user_info);
@@ -72,15 +76,17 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString("userId",userId);
 
 
-
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FragmentView();
+        intent = getIntent();
+        value = intent.getIntExtra("value", 0);
+
+        FragmentView(value);
     }
 
-    private void FragmentView() {
+    private void FragmentView(int value) {
 
         HomeFragment homeFragment = new HomeFragment();
         MapFragment ridingFragment = new MapFragment();
@@ -89,13 +95,26 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
+
+        // 초기 화면 설정
+        if(value == 0) {
+            fragmentManager.beginTransaction().replace(R.id.main_container, homeFragment, "home").commitAllowingStateLoss();
+        } else {
+
+            double f_lat = intent.getDoubleExtra("f_lat", 0);
+            double f_long = intent.getDoubleExtra("f_long", 0);
+
+            bundle.putDouble("favorite_lat", f_lat);
+            bundle.putDouble("favorite_long", f_long);
+            fragmentManager.beginTransaction().replace(R.id.main_container, ridingFragment, "riding").commitAllowingStateLoss();
+            main_bnv.getMenu().findItem(R.id.navigation_ride).setChecked(true);
+        }
+
         // 유저 정보 프래그먼트로 보내기
         homeFragment.setArguments(bundle);
         ridingFragment.setArguments(bundle);
         voiceChatFragment.setArguments(bundle);
         repairFragment.setArguments(bundle);
-        // 초기 화면 설정
-        fragmentManager.beginTransaction().replace(R.id.main_container, homeFragment, "home").commitAllowingStateLoss();
 
         main_bnv.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override

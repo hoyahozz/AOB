@@ -103,6 +103,9 @@ public class MapFragment extends Fragment
 
     private String SEOUL_API_KEY = BuildConfig.SEOUL_API_KEY; // 서울 공공데이터 API 키
 
+    private LatLng SEOUL_LOCATION = new LatLng(37.56, 126.97);
+
+
     private MapView mapView = null;
     private GoogleMap mMap;
     private Marker currentMarker = null; // 현재 위치를 나타낼 마커, 초기값은 NULL로 지정
@@ -159,6 +162,7 @@ public class MapFragment extends Fragment
     private ImageButton bike_measurement_start, bike_measurement_stop, bike_measurement_reset;
     private AlertDialog.Builder dialog;
     private boolean bikeON = false;
+    private int bFirst = 1; // 1이면 현재 위치가 있다는 뜻, 0이면 현재 위치가 없다는 뜻
 
     private Dialog favoriteDialog;
     private LoadingDialog loadingDialog;
@@ -176,7 +180,7 @@ public class MapFragment extends Fragment
     private double bef_long;
     private double cur_lat; // 현재 위도/경도
     private double cur_long;
-    private int sum_dist = 0; // 거리 합계
+    private double sum_dist = 0; // 거리 합계
     private double avg_speed = 0; // 평균 속도
     private long timer = 0; // 시간
     private double calroie = 0; // 칼로리
@@ -194,6 +198,8 @@ public class MapFragment extends Fragment
 
     // 즐겨찾기
     private ImageButton bikeFavorite;
+    private double get_favorite_lat;
+    private double get_favorite_long;
 
     // 유저 아이디를 담을 변수
     private String userId;
@@ -236,6 +242,9 @@ public class MapFragment extends Fragment
         loadingDialog = new LoadingDialog(this.getActivity());
         seoulBike_controller = mapLayout.findViewById(R.id.map_seoulBike_controller);
 
+        get_favorite_lat = getArguments().getDouble("favorite_lat", 0);
+        get_favorite_long = getArguments().getDouble("favorite_long", 0);
+
         locationRequest = new LocationRequest() // 위치를 요청한다
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // 정확도 조절
                 .setInterval(UPDATE_INTERVAL_MS) // UPDATE_INTERVAL_MS 초마다 요청한다는 의미
@@ -258,7 +267,7 @@ public class MapFragment extends Fragment
         userId = getArguments().getString("userId");
 
         bikeON = getArguments().getBoolean("bikeON");
-        Log.d(TAG,String.valueOf(bikeON));
+        Log.d(TAG, String.valueOf(bikeON));
 
         return mapLayout;
     }
@@ -267,14 +276,17 @@ public class MapFragment extends Fragment
     public void onMapReady(final GoogleMap googleMap) {
         Log.d(TAG, "onMapReady :");
 
-
         dialog = new AlertDialog.Builder(this.getActivity());
 
         mMap = googleMap;
 
+        mMap.setMaxZoomPreference(18); // 얼만큼 가까이 볼 수 있는지
+        mMap.setMinZoomPreference(8); // 얼만큼 멀리 볼 수 있는지
+
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
         //지도의 초기위치를 서울로 이동
         setDefaultLocation();
+
 
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
@@ -326,6 +338,11 @@ public class MapFragment extends Fragment
 
 
 
+        if (get_favorite_lat != 0 && get_favorite_long != 0) {
+            setFavoriteLocation();
+        }
+
+
         mMap.getUiSettings().setMyLocationButtonEnabled(false); // 로케이션 버튼 활성화
 
         mClusterManager = new ClusterManager<BikeItem>(getActivity(), mMap); // 클러스터링 마커 설정
@@ -369,7 +386,11 @@ public class MapFragment extends Fragment
             @Override
             public void onClick(View view) {
                 mMap.clear();
-                onMapReady(mMap);
+                if (seoulBike == 1) {
+                    getBikeAPI();
+                }
+                getFavoriteLocation();
+                bikeBottomSheet.setVisibility(View.GONE);
             }
         });
 
@@ -383,13 +404,15 @@ public class MapFragment extends Fragment
                 if (seoulBike == 0) { // 따릉이 보기 버튼 꺼져있을 때 누르면
                     seoulBike_controller.setTextColor(0xFF46b95b);
                     getBikeAPI();
-                    setDefaultLocation();
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(SEOUL_LOCATION, 15);
+                    mMap.moveCamera(cameraUpdate);
                     seoulBike = 1;
                 } else { // 따릉이 보기 버튼 켜져있을 때 누르면
                     mClusterManager.clearItems();
+                    bikeBottomSheet.setVisibility(View.GONE);
                     seoulBike_controller.setTextColor(0xFF5a6a72);
                     seoulBike = 0;
-                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    mMap.animateCamera(CameraUpdateFactory.zoomOut());
                 }
             }
         });
@@ -457,24 +480,13 @@ public class MapFragment extends Fragment
         // 자전거 속도 측정 모드
 
         if (bikeON == true) {
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ButtonVisibility(0);
-                    bef_lat = mCurrentLocation.getLatitude();
-                    bef_long = mCurrentLocation.getLongitude();
 
-                    Animation animation = new AlphaAnimation(0, 1);
-                    animation.setDuration(1000);
-                    // 아이콘 변경
-                    bikeMeasurement.setImageResource(R.drawable.ic_riding_on);
-                    bikeMeasurementBottomSheet.setVisibility(View.VISIBLE);
-                    bikeMeasurementBottomSheet.setAnimation(animation);
-                    // 현 위치로 이동
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
-                    mMap.moveCamera(cameraUpdate);
-                }
-            }, 1500);
+            if (mCurrentLocation != null) { // 현재 위치가 있으면 바로 실행
+                ReadyMeasurement();
+            } else { // 현재 위치가 없으면 잡을 때까지 로딩
+                loadingDialog.show();
+                bFirst = 0;
+            }
         }
 
 
@@ -500,19 +512,8 @@ public class MapFragment extends Fragment
                             seoulBike = 0;
                             seoulBike_controller.setTextColor(0xFF5a6a72);
 
-                            Animation animation = new AlphaAnimation(0, 1);
-                            animation.setDuration(1000);
-
                             bikeON = true;
                             onMapReady(mMap);
-                            bef_lat = mCurrentLocation.getLatitude();
-                            bef_long = mCurrentLocation.getLongitude();
-                            bikeMeasurement.setImageResource(R.drawable.ic_riding_on); // 아이콘 변경
-                            bikeMeasurementBottomSheet.setVisibility(View.VISIBLE);
-                            bikeMeasurementBottomSheet.setAnimation(animation);
-                            // 현 위치로 이동
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
-                            mMap.moveCamera(cameraUpdate);
                         }
                     });
                     dialog.show();
@@ -689,6 +690,11 @@ public class MapFragment extends Fragment
 
                 mCurrentLocation = location;
 
+                if (bFirst == 0) {
+                    ReadyMeasurement();
+                    bFirst = 1;
+                    loadingDialog.dismiss();
+                }
                 if (timeRunning == true && bikeON == true) { // 측정 모드 ON
                     Log.d("측정 모드", "START");
 
@@ -712,6 +718,7 @@ public class MapFragment extends Fragment
                     dist = (int) (dist * 100) / 100.0;
                     Log.d("dist", String.valueOf(dist));
                     sum_dist += dist;
+                    sum_dist = (int) (sum_dist * 100) / 100.0;
                     Log.d("sum_dist", String.valueOf(sum_dist));
                     // 평균 속도 계산
                     if (timer != 0) {
@@ -890,23 +897,28 @@ public class MapFragment extends Fragment
 
 
     public void setDefaultLocation() {
-        //디폴트 위치, Seoul
-        LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
-        String markerTitle = "서울";
-        String markerSnippet = "대한민국의 수도";
 
-        // 디폴트 위치 마커 넣는 과정
-//        if (currentMarker != null) currentMarker.remove();
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(DEFAULT_LOCATION);
-//        markerOptions.title(markerTitle);
-//        markerOptions.snippet(markerSnippet);
-//        markerOptions.draggable(true);
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//        currentMarker = mMap.addMarker(markerOptions);
+        LatLng DEFAULT_LOCATION = SEOUL_LOCATION;
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 15);
         mMap.moveCamera(cameraUpdate);
+    }
+
+    public void setFavoriteLocation() { // 즐겨찾기 액티비티에서 넘어온 값이 있으면 즐겨찾기 위치로 카메라 줌인되게
+
+        LatLng FAVORITE_LOCATION = new LatLng(get_favorite_lat, get_favorite_long);
+
+        if (get_favorite_lat == 0 || get_favorite_long == 0) {
+            FAVORITE_LOCATION = SEOUL_LOCATION;
+        }
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(FAVORITE_LOCATION, 15);
+        mMap.moveCamera(cameraUpdate);
+
+        // 그리고 다시 0으로 초기화함으로서 mapReady 에 방해되지 않게
+        get_favorite_lat = 0;
+        get_favorite_long = 0;
+
     }
 
 
@@ -1022,7 +1034,7 @@ public class MapFragment extends Fragment
                         mClusterManager.addItem(bikeItem);
 
                     }
-                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    mMap.animateCamera(CameraUpdateFactory.zoomOut());
                 }
             }
 
@@ -1103,6 +1115,7 @@ public class MapFragment extends Fragment
                 bikeMeasurement.setVisibility(View.VISIBLE);
                 bikeFavorite.setVisibility(View.VISIBLE);
                 bikeRefresh.setVisibility(View.VISIBLE);
+                seoulBike_controller.setVisibility(View.VISIBLE);
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])
@@ -1328,6 +1341,23 @@ public class MapFragment extends Fragment
         });
 
 
+    }
+
+    public void ReadyMeasurement() {
+        ButtonVisibility(0);
+
+        bef_lat = mCurrentLocation.getLatitude();
+        bef_long = mCurrentLocation.getLongitude();
+
+        Animation animation = new AlphaAnimation(0, 1);
+        animation.setDuration(1000);
+        // 아이콘 변경
+        bikeMeasurement.setImageResource(R.drawable.ic_riding_on);
+        bikeMeasurementBottomSheet.setVisibility(View.VISIBLE);
+        bikeMeasurementBottomSheet.setAnimation(animation);
+        // 현 위치로 이동
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
+        mMap.moveCamera(cameraUpdate);
     }
 
     public void ButtonVisibility(int visible) {

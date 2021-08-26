@@ -1,7 +1,9 @@
 package com.dongyang.android.aob.User.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +19,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
+import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.R;
+import com.dongyang.android.aob.User.FavoriteActivity;
 import com.dongyang.android.aob.User.Model.Favorite;
 import com.dongyang.android.aob.User.Service.FavoriteService;
 
@@ -108,21 +112,25 @@ public class FavoriteAdapter
             title.setText(datas.get(position).getTitle());
             content.setText(datas.get(position).getContent());
             int fnum = datas.get(position).getFnum();
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Toast.makeText(context, fnum + "(fnum) 클릭하였음.", Toast.LENGTH_SHORT).show();
-//                }
-//            });
 
             items.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, fnum + "(fnum) 클릭하였음.", Toast.LENGTH_SHORT).show();
+
+                    double latitude = datas.get(position).getLatitude();
+                    double longitude = datas.get(position).getLongitude();
+
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("f_lat", latitude);
+                    intent.putExtra("f_long", longitude);
+                    intent.putExtra("value", 1);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+                    ((Activity)context).finish();
+
+                    // Toast.makeText(context, fnum + "(fnum) 클릭하였음.", Toast.LENGTH_SHORT).show();
                 }
             });
-
-
 
         }
     }
