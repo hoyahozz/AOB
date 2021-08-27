@@ -11,7 +11,10 @@ public interface BikeService {
 
     String SEOUL_URL = "http://openapi.seoul.go.kr:8088/";
 
-    @GET("{apikey}/json/bikeList/1/500/")
-    Call<SeoulBike> getBike(@Path
-    ("apikey") String apikey);
+    @GET("{apikey}/json/bikeList/{start}/{end}/")
+    Call<SeoulBike> getBike(
+            @Path("apikey") String apikey,
+            @Path("start") int start,
+            @Path("end") int end
+            );
 }

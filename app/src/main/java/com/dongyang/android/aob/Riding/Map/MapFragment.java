@@ -32,6 +32,7 @@ import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -337,7 +338,6 @@ public class MapFragment extends Fragment
         }
 
 
-
         if (get_favorite_lat != 0 && get_favorite_long != 0) {
             setFavoriteLocation();
         }
@@ -369,7 +369,7 @@ public class MapFragment extends Fragment
             @Override
             public void onClick(View view) {
                 bikeBottomSheet.setVisibility(View.GONE);
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); // 현재 좌표 지정
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15); // 현재 좌표 지정
                 mMap.moveCamera(cameraUpdate); // 현재 좌표로 이동
             }
         });
@@ -552,8 +552,12 @@ public class MapFragment extends Fragment
                     timeRunning = true; // 스탑 워치 작동 중
                     bike_measurement_start.setVisibility(View.GONE);
                     bike_measurement_stop.setVisibility(View.VISIBLE);
+                    bike_measurement_reset.setVisibility(View.VISIBLE);
                     bike_measurement_reset.setEnabled(false);
 
+                    if (ridingPauseMarker != null) {
+                        ridingPauseMarker.remove(); // 중지 지점 삭제
+                    }
 
                     // 거리 설정
                     MarkerOptions ridingStart = new MarkerOptions();
@@ -583,11 +587,11 @@ public class MapFragment extends Fragment
             public void onClick(View view) {
                 bike_timer.stop();
 
-//                MarkerOptions ridingPause = new MarkerOptions();
-//                ridingPause.position(currentPosition);
-//                ridingPause.title("기록 측정 정지지점");
-//                ridingPause.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                ridingPauseMarker = mMap.addMarker(ridingPause);
+                MarkerOptions ridingPause = new MarkerOptions();
+                ridingPause.position(currentPosition);
+                ridingPause.title("기록 측정 종료지점");
+                ridingPause.icon((BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_stop_marker))));
+                ridingPauseMarker = mMap.addMarker(ridingPause);
 
                 pauseOffset = SystemClock.elapsedRealtime() - bike_timer.getBase();
                 timer = SystemClock.elapsedRealtime() - bike_timer.getBase();
@@ -598,26 +602,27 @@ public class MapFragment extends Fragment
             }
         });
 
-        bike_measurement_reset.setOnClickListener(new View.OnClickListener() {
+        bike_measurement_reset.setOnTouchListener(new View.OnTouchListener() { // 리셋 버튼 터치했을 때 반응
+            long then = 0;
+
             @Override
-            public void onClick(View view) {
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    then = (Long) System.currentTimeMillis(); // 버튼 누른 시간 측정
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    if (((Long) System.currentTimeMillis() - then) > 1200) { // 버튼 누른 시간이 1200m/s 보다 길면 측정 종료
 
-                dialog.setMessage("측정을 종료하고 리셋 하시겠습니까?");
-                dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-                dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // ridingPauseMarker.remove(); // 중지 지점 삭제
-                        MarkerOptions ridingEnd = new MarkerOptions();
-                        ridingEnd.position(currentPosition);
-                        ridingEnd.title("기록 측정 종료 지점");
-                        ridingEnd.icon((BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_stop_marker))));
-                        ridingEndMarker = mMap.addMarker(ridingEnd);
+                        if (ridingPauseMarker != null) {
+                            ridingPauseMarker.remove(); // 중지 지점 삭제
+                        }
+                        if (ridingStartMarker != null) {
+                            ridingStartMarker.remove();
+                        }
+//                        MarkerOptions ridingEnd = new MarkerOptions();
+//                        ridingEnd.position(currentPosition);
+//                        ridingEnd.title("기록 측정 종료 지점");
+//                        ridingEnd.icon((BitmapDescriptorFactory.fromBitmap(getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_riding_stop_marker))));
+//                        ridingEndMarker = mMap.addMarker(ridingEnd);
 
                         // 종료 지점 경도, 위도 설정
                         f_lat = String.valueOf(location.getLatitude());
@@ -647,12 +652,18 @@ public class MapFragment extends Fragment
                         f_time = ""; // 종료 지점 GPS 정보 초기화
 
                         bike_avg_speed.setText("0.0 m/s");
-                        bike_distance.setText("0 m");
+                        bike_distance.setText("0.0 m");
 
+                        bike_measurement_start.setVisibility(View.VISIBLE);
+                        bike_measurement_reset.setVisibility(View.GONE);
+                        bike_measurement_stop.setVisibility(View.GONE);
 
+                        return true;
+                    } else { // 조건에 충족하지 못하면 측정 종료하지 않음
+                        Toast.makeText(getActivity(), "길게 누르면 측정이 종료돼요!", Toast.LENGTH_LONG).show();
                     }
-                });
-                dialog.show();
+                }
+                return false;
             }
         });
 
@@ -805,7 +816,6 @@ public class MapFragment extends Fragment
     public void onPause() {
         super.onPause();
         mapView.onPause();
-
         Log.d(TAG, "onPause");
     }
 
@@ -822,6 +832,7 @@ public class MapFragment extends Fragment
 
         super.onStop();
         mapView.onStop();
+        Log.d(TAG, "onStop ON");
 
         if (mFusedLocationClient != null && bikeON == false) {
 
@@ -1007,7 +1018,7 @@ public class MapFragment extends Fragment
 
         BikeService retrofitAPI = retrofit.create(BikeService.class);
 
-        retrofitAPI.getBike(SEOUL_API_KEY).enqueue(new Callback<SeoulBike>() {
+        retrofitAPI.getBike(SEOUL_API_KEY,1,1000).enqueue(new Callback<SeoulBike>() {
             @Override
             public void onResponse(Call<SeoulBike> call, retrofit2.Response<SeoulBike> response) {
                 if (response.isSuccessful()) {

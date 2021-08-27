@@ -28,7 +28,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private String TAG = "MainActivity";
     private final int FRAGMENT_HOME = 1;
     private final int FRAGMENT_MAP = 2;
     private final int FRAGMENT_CHAT = 3;
@@ -246,5 +246,23 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_container, ridingFragment, "riding").commit();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG,"onPause ON");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG,"onStop ON");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy ON");
     }
 }

@@ -265,6 +265,7 @@
                 android:layout_marginTop="10dp"
                 android:src="@drawable/ic_riding_stop"
                 android:enabled="false"
+                android:visibility="gone"
                 android:background="@color/transparent"/>
 
             <ImageButton
