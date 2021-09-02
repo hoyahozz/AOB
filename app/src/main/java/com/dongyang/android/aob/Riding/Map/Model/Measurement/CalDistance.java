@@ -6,7 +6,7 @@ package com.dongyang.android.aob.Riding.Map.Model.Measurement;
 
  */
 
-public class CalDistance{
+public class   CalDistance{
 
     public double theta, dist;
     public double bef_lat,bef_long,cur_lat,cur_long;
