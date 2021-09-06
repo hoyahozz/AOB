@@ -13,4 +13,13 @@
     <color name="gray">#5a6a72</color>
     <color name="transparent">#00FFFFFF</color>
 
+    <!-- 아고라 -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="lightColorAccent">#30FF4081</color>
+    <color name="dark_black">#CC262626</color>
+    <color name="transparent_75_white">#ACFFFFFF</color>
+    <color name="dark_gray">#FF55585A</color>
+
 </resources>

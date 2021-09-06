@@ -1,6 +1,9 @@
 package com.dongyang.android.aob.Repair;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,12 +14,14 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +31,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dongyang.android.aob.LoadingDialog;
+import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Repair.Model.Result;
 import com.dongyang.android.aob.Repair.Service.DeepRunningService;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -49,13 +57,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.Manifest.permission_group.CAMERA;
 import static android.app.Activity.RESULT_OK;
 
 
 public class RepairFragment extends Fragment {
+    private View view;
 
     private static final String TAG = "RepairFragment";
-
+    private static final int PERMISSIONS_REQUEST_CODE = 100;
     public static final int REQUEST_TAKE_PHOTO = 10;
     public static final int REQUEST_PERMISSION = 11;
 
@@ -63,7 +73,11 @@ public class RepairFragment extends Fragment {
     private ImageView ivCapture;
     private String mCurrentPhotoPath;
     private LoadingDialog loadingDialog;
+    private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
 
+    String[] REQUIRED_PERMISSIONS = {Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +90,8 @@ public class RepairFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View repairLayout = inflater.inflate(R.layout.fragment_repair, container, false);
+
+        mLayout = repairLayout.findViewById(R.id.repairLayout);
 
         checkPermission(); //권한체크
 
@@ -363,37 +379,100 @@ public class RepairFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        checkPermission(); //권한체크
     }
+
+
+
+    final int MULTI_PERMISSION = 999;
 
     //권한 확인
     public void checkPermission() {
-        int permissionCamera = ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.CAMERA);
-        int permissionRead = ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        int permissionWrite = ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        try {
+            ArrayList<String> permissionOK = new ArrayList();
+            ArrayList<String> permissionNO = new ArrayList();
 
-        //권한이 없으면 권한 요청
-        if (permissionCamera != PackageManager.PERMISSION_GRANTED
-                || permissionRead != PackageManager.PERMISSION_GRANTED
-                || permissionWrite != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), Manifest.permission.CAMERA)) {
-                Toast.makeText(this.getActivity(), " 앱을 실행하기 위해 권한이 필요합니다", Toast.LENGTH_SHORT).show();
+            if (REQUIRED_PERMISSIONS.length > 0) {
+                int check = 0;
+                for (String data : REQUIRED_PERMISSIONS) {
+                    check = ContextCompat.checkSelfPermission(getActivity(), data);
+                    if (check != PackageManager.PERMISSION_GRANTED) {
+                        permissionNO.add(data);
+                    } else {
+                        permissionOK.add(data);
+                    }
+                }
+                if (permissionNO.size() > 0) { // 퍼미션 거부된 값이 있을 경우
+                    requestPermissions(permissionNO.toArray(new String[permissionNO.size()]), MULTI_PERMISSION);
+                } else {
+                    getPermissionOK();
+                }
+            } else {
+                Toast.makeText(getActivity(), "퍼미션 허용을 확인할 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
             }
-            ActivityCompat.requestPermissions(this.getActivity(), new String[]{
-                    Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void getPermissionOK() {
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    ArrayList<String> permissionNoRealTime = new ArrayList();
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this.getActivity(), "권한 확인", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this.getActivity(), "권한 없음", Toast.LENGTH_SHORT).show();
+            case MULTI_PERMISSION: {
+                if (grantResults.length > 0) { // 퍼미션 권한이 부여되지 않는 배열 길이가 0보다 클경우
+                    if (permissionNoRealTime.size() > 0) {
+                        permissionNoRealTime.clear();
+                    }
+                    for (int i = 0; i < permissions.length; i++) { //배열을 순회하면서
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {  //권한이 부여되어 있지 않을 경우 확인
+                            permissionNoRealTime.add(permissions[i]);
+                        }
+                    }
+                    Log.d("---", "---");
+                    Log.e("//===========//", "============");
+                    Log.d("", "\n" + "[실시간 퍼미션 거부된 리스트 : " + permissionNoRealTime.toString() + "]");
+                    Log.e("//===========//", "============");
+                    Log.d("---", "---");
+                    if (permissionNoRealTime.size() > 0) { //TODO 실시간으로 권한 허용이 거부된 값이 있을 경우
+                        // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있습니다.
+
+                        // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[1])
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[2])) {
+
+                            // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있습니다.
+                            Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요. ",
+                                    Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    getActivity().finish();
+                                }
+                            }).show();
+
+                        } else {
+                            // "다시 묻지 않음"을 사용자가 체크하고 거부를 선택한 경우에는 설정(앱 정보)에서 퍼미션을 허용해야 앱을 사용할 수 있습니다.
+                            Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다.",
+                                    Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    getActivity().finish();
+                                }
+                            }).show();
+                        }
+                    } else { //TODO 실시간으로 모든 권한이 허용된 경우 [메소드 호출]
+                        getPermissionOK(); //메소드 호출
+                    }
                 }
+                return;
             }
         }
     }

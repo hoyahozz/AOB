@@ -1,6 +1,7 @@
 package com.dongyang.android.aob.Repair.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Repair.Model.Youtube;
+import com.dongyang.android.aob.Repair.YoutubePlayerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +68,13 @@ public class YoutubeAdapter
             // https://jizard.tistory.com/179
             Glide.with(context).load(url).into(thumbnail); // url -> 사진으로 변경 후 이미지뷰에 설정
 
-            itemView.setOnClickListener(new View.OnClickListener() { // 리스트를 눌렀을 때 액션 설정(해당 유튜브 동영상이 나오게 설정해야 함)
+            itemView.setOnClickListener(new View.OnClickListener() { // 리스트를 눌렀을 때 액션 설정
                 @Override
                 public void onClick(View view) {
+                    int position = getAdapterPosition(); // 유튜브 재생이 되는 액티비티로 이동
+                    Intent intent = new Intent(context, YoutubePlayerActivity.class);
+                    intent.putExtra("videoId", datas.get(position).getVideoId()); // videoId 값을 이용하여 영상 재생
+                    context.startActivity(intent);
                     Toast.makeText(context, "클릭하였음.", Toast.LENGTH_SHORT).show();
                 }
             });

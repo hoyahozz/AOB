@@ -8,32 +8,43 @@ import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.view.Menu;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.dongyang.android.aob.Introduction.Activity.LoginActivity;
 import com.dongyang.android.aob.R;
-import com.squareup.picasso.Picasso;
+import com.dongyang.android.aob.Map.Model.Measurement.Measure;
+import com.dongyang.android.aob.Map.Service.MeasureService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class InfoActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ImageView user_profile;
     private CardView user_cardView;
+    private String userName, userId;
     private Button logout;
     private SharedPreferences pref;
+    private ImageView mapImage;
     private SharedPreferences.Editor editor;
+    private String mapImg = "";
 
 
     @Override
@@ -41,8 +52,13 @@ public class InfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
+        pref = getSharedPreferences("userInfo", MODE_PRIVATE);
+        userName = pref.getString("name", "김이엘").toString();
+        userId = pref.getString("id","").toString();
+
         logout = findViewById(R.id.info_logout);
         toolbar = findViewById(R.id.info_toolbar);
+        mapImage = findViewById(R.id.info_mapImage);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -51,6 +67,8 @@ public class InfoActivity extends AppCompatActivity {
 
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         editor = pref.edit();
+
+        setMapImage();
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,5 +109,92 @@ public class InfoActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void setMapImage() {
+        Gson gson = new GsonBuilder().setLenient().create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MeasureService.MEASURE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        MeasureService retrofitAPI = retrofit.create(MeasureService.class);
+
+        retrofitAPI.getMeasure(userId).enqueue(new Callback<List<Measure>>() {
+            @Override
+            public void onResponse(Call<List<Measure>> call, Response<List<Measure>> response) {
+                // loadingDialog.dismiss();
+                if (response.isSuccessful()) { // 성공적으로 받아왔을 때
+                    Log.d("Measure", "Response");
+                    List<Measure> data = response.body();
+
+                    Log.d("Measure",String.valueOf(data.get(0).getMnum()));
+                    Log.d("Measure",data.get(0).getId());
+                    Log.d("Measure",String.valueOf(data.get(0).getTime()));
+                    Log.d("Measure",String.valueOf(data.get(0).getDist()));
+                    Log.d("Measure",String.valueOf(data.get(0).getKcal()));
+
+                    mapImg = data.get(0).getImage();
+                    if(mapImg != "") {
+                        Log.d("Measure","Img ON");
+                    }
+                    Bitmap bitmap = StringToBitMaps(mapImg);
+                    mapImage.setImageBitmap(bitmap);
+                    mapImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Measure>> call, Throwable t) {
+                // loadingDialog.dismiss();
+                Toast.makeText(getApplicationContext(), "서버 네트워크가 닫혀있습니다.", Toast.LENGTH_LONG).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public static byte[] binaryStringToByteArray(String s) {
+        int count = s.length() / 8;
+        byte[] b = new byte[count];
+        for (int i = 1; i < count; ++i) {
+            String t = s.substring((i - 1) * 8, i * 8);
+            b[i - 1] = binaryStringToByte(t);
+        }
+        return b;
+    }
+
+    public static byte binaryStringToByte(String s) {
+        byte ret = 0, total = 0;
+        for (int i = 0; i < 8; ++i) {
+            ret = (s.charAt(7 - i) == '1') ? (byte) (1 << i) : 0;
+            total = (byte) (ret | total);
+        }
+        return total;
+    }
+
+    public static Bitmap StringToBitmap(String ImageString) {
+        try {
+            byte[] bytes = binaryStringToByteArray(ImageString);
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            Bitmap bitmap = BitmapFactory.decodeStream(bais);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    public Bitmap StringToBitMaps(String encodedString){
+        try {
+            byte [] encodeByte=Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
 
 }

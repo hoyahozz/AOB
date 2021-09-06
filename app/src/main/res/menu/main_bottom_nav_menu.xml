@@ -21,4 +21,9 @@
         android:icon="@drawable/ic_repair"
         android:title="repair" />
 
+    <item
+        android:id="@+id/navigation_streaming"
+        android:icon="@drawable/ic_streaming"
+        android:title="streaming" />
+
 </menu>

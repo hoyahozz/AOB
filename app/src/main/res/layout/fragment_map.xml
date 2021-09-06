@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Riding.Map.MapFragment">
+    tools:context=".Map.MapFragment">
 
     <RelativeLayout
         android:id="@+id/mapLayout"
@@ -164,7 +164,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0.0 m"
+                android:text="0.0 km"
                 android:textColor="#000000"
                 android:textSize="20dp"
                 android:gravity="center"
@@ -192,7 +192,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0.0 m/s"
+                android:text="0.0 km/h"
                 android:layout_gravity="right"
                 android:textSize="20dp"
                 android:textColor="#000000"

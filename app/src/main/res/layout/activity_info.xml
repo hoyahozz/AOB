@@ -186,12 +186,20 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/info_mapImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:src="@drawable/logo_aob"
+        android:layout_marginTop="20dp"/>
+
 
     <Button
         android:id="@+id/info_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:layout_gravity="center"
         android:background="@color/transparent"
         android:fontFamily="@font/nanum_square"

@@ -2,6 +2,7 @@ package com.dongyang.android.aob.Main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,9 +14,10 @@ import android.widget.ImageView;
 
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Repair.RepairFragment;
+import com.dongyang.android.aob.Safety.StreamingFragment;
 import com.dongyang.android.aob.User.InfoActivity;
 import com.dongyang.android.aob.VoiceChat.VoiceChatFragment;
-import com.dongyang.android.aob.Riding.Map.MapFragment;
+import com.dongyang.android.aob.Map.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private final int FRAGMENT_REPAIR = 4;
     private BottomNavigationView main_bnv;
     private ImageView userImage;
+    private PermissionSupport permission;
 
 //    Fragment homeFragment, mapFragment, voiceChatFragment, repairFragment;
 
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         value = 0;
+        permissionCheck();
 
         main_bnv = findViewById(R.id.main_bnv);
         userInfo = findViewById(R.id.main_user_info);
@@ -66,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
         // 세션 영역에서 유저 이름 받아오기
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         userName = pref.getString("name", "김이엘").toString();
-        userId = pref.getString("id","").toString();
+        userId = pref.getString("id", "").toString();
 
         Log.d("login", userName);
 
         // 프래그먼트로 넘길 bundle 값 입력
         bundle = new Bundle();
         bundle.putString("userName", userName);
-        bundle.putString("userId",userId);
+        bundle.putString("userId", userId);
 
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
@@ -92,12 +96,13 @@ public class MainActivity extends AppCompatActivity {
         MapFragment ridingFragment = new MapFragment();
         VoiceChatFragment voiceChatFragment = new VoiceChatFragment();
         RepairFragment repairFragment = new RepairFragment();
+        StreamingFragment streamingFragment = new StreamingFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
 
         // 초기 화면 설정
-        if(value == 0) {
+        if (value == 0) {
             fragmentManager.beginTransaction().replace(R.id.main_container, homeFragment, "home").commitAllowingStateLoss();
         } else {
 
@@ -115,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         ridingFragment.setArguments(bundle);
         voiceChatFragment.setArguments(bundle);
         repairFragment.setArguments(bundle);
+        streamingFragment.setArguments(bundle);
 
         main_bnv.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -126,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
 
-                        if(fragmentManager.findFragmentByTag("home") != null) {
+                        if (fragmentManager.findFragmentByTag("home") != null) {
                             // 프래그먼트가 존재한다면 보여주기
                             fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
                         } else { // 프래그먼트가 존재하지 않는다면 추가
@@ -134,87 +140,134 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // 다른 프래그먼트가 보일땐 가리기
-                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                        if (fragmentManager.findFragmentByTag("riding") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                        if (fragmentManager.findFragmentByTag("voiceChat") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                        if (fragmentManager.findFragmentByTag("repair") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
                         }
-                        
+
+                        if (fragmentManager.findFragmentByTag("streaming") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                        }
+
                         return true;
 
                     case R.id.navigation_ride:
 
-                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                        if (fragmentManager.findFragmentByTag("riding") != null) {
                             // 프래그먼트가 존재한다면 보여주기
                             fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("riding")).commit();
                         } else {
                             fragmentManager.beginTransaction().add(R.id.main_container, ridingFragment, "riding").commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("home") != null) {
+                        if (fragmentManager.findFragmentByTag("home") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                        if (fragmentManager.findFragmentByTag("voiceChat") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                        if (fragmentManager.findFragmentByTag("repair") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
                         }
 
+                        if (fragmentManager.findFragmentByTag("streaming") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                        }
+
                         return true;
+
                     case R.id.navigation_voice_chat:
 
-                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                        if (fragmentManager.findFragmentByTag("voiceChat") != null) {
                             // 프래그먼트가 존재한다면 보여주기
                             fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("voiceChat")).commit();
                         } else {
                             fragmentManager.beginTransaction().add(R.id.main_container, voiceChatFragment, "voiceChat").commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                        if (fragmentManager.findFragmentByTag("riding") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("home") != null) {
+                        if (fragmentManager.findFragmentByTag("home") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                        if (fragmentManager.findFragmentByTag("repair") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
                         }
 
+                        if (fragmentManager.findFragmentByTag("streaming") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                        }
+
                         return true;
+
                     case R.id.navigation_repair:
 
-                        if(fragmentManager.findFragmentByTag("repair") != null) {
+                        if (fragmentManager.findFragmentByTag("repair") != null) {
                             // 프래그먼트가 존재한다면 보여주기
                             fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("repair")).commit();
                         } else {
                             fragmentManager.beginTransaction().add(R.id.main_container, repairFragment, "repair").commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("riding") != null) {
+                        if (fragmentManager.findFragmentByTag("riding") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("voiceChat") != null) {
+                        if (fragmentManager.findFragmentByTag("voiceChat") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
                         }
 
-                        if(fragmentManager.findFragmentByTag("home") != null) {
+                        if (fragmentManager.findFragmentByTag("home") != null) {
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                         }
 
+                        if (fragmentManager.findFragmentByTag("streaming") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                        }
+
                         return true;
-                    default: return false;
+
+                    case R.id.navigation_streaming:
+
+                        if (fragmentManager.findFragmentByTag("streaming") != null) {
+                            // 프래그먼트가 존재한다면 보여주기
+                            fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("streaming")).commit();
+                        } else {
+                            fragmentManager.beginTransaction().add(R.id.main_container, streamingFragment, "streaming").commit();
+                        }
+
+                        if (fragmentManager.findFragmentByTag("riding") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
+                        }
+
+                        if (fragmentManager.findFragmentByTag("voiceChat") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
+                        }
+
+                        if (fragmentManager.findFragmentByTag("home") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
+                        }
+
+                        if (fragmentManager.findFragmentByTag("repair") != null) {
+                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
+                        }
+
+                        return true;
+
+                    default:
+                        return false;
                 }
             }
         });
@@ -251,18 +304,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG,"onPause ON");
+        Log.d(TAG, "onPause ON");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop ON");
+        Log.d(TAG, "onStop ON");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy ON");
+        Log.d(TAG, "onDestroy ON");
+    }
+
+
+    // 권한 체크
+    private void permissionCheck() {
+        // SDK 23버전 이하 버전에서는 Permission이 필요하지 않다.
+        if (Build.VERSION.SDK_INT >= 23) {
+            // 방금 전 만들었던 클래스 객체 생성
+            permission = new PermissionSupport(this, this);
+
+            // 권한 체크한 후에 리턴이 false로 들어온다면
+            if (!permission.checkPermission()) {
+                // 권한 요청을 해줍니다.
+                permission.requestPermission();
+            }
+        }
+    }
+
+    // Request Permission에 대한 결과 값을 받아올 수 있습니다.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // 여기서도 리턴이 false로 들어온다면 (사용자가 권한 허용을 거부하였다면)
+
+//        if (!permission.permissionResult(requestCode, permissions, grantResults)) {
+//            // 여기서 다시 Permission 요청을 걸었습니다.
+//            permission.requestPermission();
+//        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
