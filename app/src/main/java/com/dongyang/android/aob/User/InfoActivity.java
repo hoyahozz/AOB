@@ -54,7 +54,9 @@ public class InfoActivity extends AppCompatActivity {
 
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         userName = pref.getString("name", "김이엘").toString();
-        userId = pref.getString("id","").toString();
+        userId = pref.getString("id", "").toString();
+
+        // userId = "hoya";
 
         logout = findViewById(R.id.info_logout);
         toolbar = findViewById(R.id.info_toolbar);
@@ -68,7 +70,8 @@ public class InfoActivity extends AppCompatActivity {
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         editor = pref.edit();
 
-        setMapImage();
+        if (userId != "")
+            setMapImage();
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,19 +131,25 @@ public class InfoActivity extends AppCompatActivity {
                     Log.d("Measure", "Response");
                     List<Measure> data = response.body();
 
-                    Log.d("Measure",String.valueOf(data.get(0).getMnum()));
-                    Log.d("Measure",data.get(0).getId());
-                    Log.d("Measure",String.valueOf(data.get(0).getTime()));
-                    Log.d("Measure",String.valueOf(data.get(0).getDist()));
-                    Log.d("Measure",String.valueOf(data.get(0).getKcal()));
+                    if (data.size() > 0) {
+                        Log.d("Measure", String.valueOf(data.get(0).getMnum()));
+                        Log.d("Measure", data.get(0).getId());
+                        Log.d("Measure", String.valueOf(data.get(0).getTime()));
+                        Log.d("Measure", String.valueOf(data.get(0).getDist()));
+                        Log.d("Measure", String.valueOf(data.get(0).getKcal()));
 
-                    mapImg = data.get(0).getImage();
-                    if(mapImg != "") {
-                        Log.d("Measure","Img ON");
+                        mapImg = data.get(0).getImage();
+                        if (mapImg != "") {
+                            Log.d("Measure", "Img ON");
+                        }
+                        Bitmap bitmap = StringToBitMaps(mapImg);
+                        mapImage.setImageBitmap(bitmap);
+                        mapImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
                     }
-                    Bitmap bitmap = StringToBitMaps(mapImg);
-                    mapImage.setImageBitmap(bitmap);
-                    mapImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "데이터가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -185,12 +194,12 @@ public class InfoActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap StringToBitMaps(String encodedString){
+    public Bitmap StringToBitMaps(String encodedString) {
         try {
-            byte [] encodeByte=Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
             return bitmap;
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.getMessage();
             return null;
         }

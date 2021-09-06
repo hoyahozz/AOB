@@ -75,7 +75,6 @@ public class YoutubeAdapter
                     Intent intent = new Intent(context, YoutubePlayerActivity.class);
                     intent.putExtra("videoId", datas.get(position).getVideoId()); // videoId 값을 이용하여 영상 재생
                     context.startActivity(intent);
-                    Toast.makeText(context, "클릭하였음.", Toast.LENGTH_SHORT).show();
                 }
             });
 
