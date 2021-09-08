@@ -1,6 +1,8 @@
 package com.dongyang.android.aob.VoiceChat;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +13,6 @@ import com.dongyang.android.aob.R;
 
 
 public class VoiceChatFragment extends Fragment {
-    /*
-    Menu menu;
-    MenuItem item;
-    View view;
-     */
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,18 +22,24 @@ public class VoiceChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        /*
-        ((BaseActivity) requireActivity()).InitUIandEvent_VF();
-        ((BaseActivity)requireActivity()).deInitUIandEvent_VF();
+        Handler hand = new Handler();
 
-        requireActivity().onCreateOptionsMenu(menu);
-        requireActivity().onOptionsItemSelected(item);
-        ((BaseActivity)requireActivity()).onClickJoin(view);
-        ((BaseActivity)requireActivity()).forwardToRoom();
-        */
+        hand.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                try{
+                    // TODO Auto-generated method stub
+                    Intent i = new Intent( VoiceChatFragment.this.getActivity(), ChatStartActivity.class);
+                    startActivity(i);
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 200); //1초 후 ChatStartActivity로 화면 전환
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_voice_chat, container, false);
+        return inflater.inflate(R.layout.fragment_chat_loading, container, false);
     }
-
 }

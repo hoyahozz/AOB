@@ -22,4 +22,5 @@
     <string name="text_id">abcdefghijklmnopqrstuvwxyz0123456789</string>
 
     <string name="msg_no_network_connection">No network connection, please check the network settings</string>
+    <string name="channel_access">채널 접속</string>
 </resources>

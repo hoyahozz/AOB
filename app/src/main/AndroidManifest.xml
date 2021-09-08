@@ -19,20 +19,24 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 자가 수리 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <!-- 자가 수리 -->
     <!-- Camera 기능 및 내/외부 저장소에 저장 할 수 있도록 권한설정 -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 문자전송 -->
-    <uses-permission android:name="android.permission.SEND_SMS" />s
-
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- 후방 스트리밍 -->
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera2" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <!-- MultidexAppication -> AgApplication cast 문제로 application 안에 android:name을 AGApplication으로 지정! -->
+
     <application
+        android:name="com.dongyang.android.aob.VoiceChat.AGApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -42,7 +46,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AOB"
         android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="m">
         <activity android:name=".User.InfoActivity" />
         <activity android:name=".Safety.SafeActivity" />
         <activity android:name=".User.FavoriteActivity" />
@@ -66,6 +71,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
 
         <provider
@@ -79,6 +91,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
+
+        <service
+            android:name=".Safety.tcp"/>
+
     </application>
 
     <!-- Android 11(API 수준30) 이상에서 필터링 되는걸 표시하려고 넣음
@@ -88,6 +104,4 @@
             <action android:name="com.google.android.youtube.api.service.START" />
         </intent>
     </queries>
-
-
 </manifest>
