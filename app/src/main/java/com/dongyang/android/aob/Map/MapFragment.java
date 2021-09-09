@@ -50,14 +50,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongyang.android.aob.BuildConfig;
+import com.dongyang.android.aob.Introduction.Activity.LoginActivity;
 import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
 import com.dongyang.android.aob.LoadingDialog;
+import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.Map.Marker.BikeRenderer;
 import com.dongyang.android.aob.Map.Model.Bike.BikeItem;
 import com.dongyang.android.aob.Map.Model.Bike.RentBikeStatus;
 import com.dongyang.android.aob.Map.Model.Bike.Row;
 import com.dongyang.android.aob.Map.Model.Bike.SeoulBike;
 import com.dongyang.android.aob.Map.Service.MeasureService;
+import com.dongyang.android.aob.SplashActivity;
 import com.dongyang.android.aob.User.FavoriteActivity;
 import com.dongyang.android.aob.User.Model.Favorite;
 import com.dongyang.android.aob.Map.Model.Measurement.CalDistance;
@@ -173,6 +176,8 @@ public class MapFragment extends Fragment
     private int bFirst = 1; // 1이면 현재 위치가 있다는 뜻, 0이면 현재 위치가 없다는 뜻
 
     private Dialog favoriteDialog;
+    private Dialog measurementDialog;
+    private Bitmap map_bitmap;
     private LoadingDialog loadingDialog;
 
 
@@ -559,6 +564,10 @@ public class MapFragment extends Fragment
             public void onClick(View view) {
                 if (!timeRunning) {
                     // 시간 설정
+
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 15);
+                    mMap.moveCamera(cameraUpdate);
+
                     bike_timer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
                     bike_timer.start(); // 스탑 워치 시작
                     timeRunning = true; // 스탑 워치 작동 중
@@ -598,6 +607,9 @@ public class MapFragment extends Fragment
             @Override
             public void onClick(View view) {
                 bike_timer.stop();
+
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentPosition, 12);
+                mMap.moveCamera(cameraUpdate);
 
                 MarkerOptions ridingPause = new MarkerOptions();
                 ridingPause.position(currentPosition);
@@ -1368,15 +1380,9 @@ public class MapFragment extends Fragment
     public void MeasurementStop() {
 
 
+        loadingDialog.show();
         // 스크린 캡처
         ScreenCapture();
-
-        if (ridingPauseMarker != null) {
-            ridingPauseMarker.remove(); // 중지 지점 삭제
-        }
-        if (ridingStartMarker != null) {
-            ridingStartMarker.remove();
-        }
 
         // 종료 지점 경도, 위도 설정
         f_lat = String.valueOf(location.getLatitude());
@@ -1399,33 +1405,49 @@ public class MapFragment extends Fragment
         // String measure_data = kcal + " " + sum_dist + " " + avg_speed + " " + timer; // 파이썬 소켓통신으로 보낼 데이터
         // connect("Measure " + String.valueOf(measure_data));
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MeasureService.MEASURE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MeasureService retrofitAPI = retrofit.create(MeasureService.class);
-
         int f_timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
 
 
-        // 데이터베이스 저장
-        retrofitAPI.insertMeasure(userId, image, f_timer, sum_dist, 10.00).enqueue(new Callback<CheckSuccess>() {
-            @Override
-            public void onResponse(Call<CheckSuccess> call, retrofit2.Response<CheckSuccess> response) {
-                if (response.isSuccessful()) {
-                    Log.d("Measurement", "Response");
-                    Toast.makeText(getActivity(), "성공적으로 추가됐어요! 좌측 상단의 새로고침을 눌러보세요.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "오류 발생", Toast.LENGTH_SHORT);
-                }
-            }
 
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() { // 텀을 안주면 스크린샷이 하얀색으로 나옴
             @Override
-            public void onFailure(Call<CheckSuccess> call, Throwable t) {
-                t.printStackTrace();
+            public void run() {
+                mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                    @Override
+                    public void onMapLoaded() {
+                        loadingDialog.dismiss(); //
+                        measurementDialog = new MeasurementDialog(getActivity(), map_bitmap, userId, f_timer, sum_dist, kcal);
+                        measurementDialog.show();
+                    }
+                });
             }
-        });
+        }, 500);
+
+
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(MeasureService.MEASURE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//
+//        MeasureService retrofitAPI = retrofit.create(MeasureService.class);
+//
+//        // 데이터베이스 저장
+//        retrofitAPI.insertMeasure(userId, image, f_timer, sum_dist, 10.00).enqueue(new Callback<CheckSuccess>() {
+//            @Override
+//            public void onResponse(Call<CheckSuccess> call, retrofit2.Response<CheckSuccess> response) {
+//                if (response.isSuccessful()) {
+//                    Log.d("Measurement", "Response");
+//                    Toast.makeText(getActivity(), "성공적으로 추가됐어요! 좌측 상단의 새로고침을 눌러보세요.", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getActivity(), "오류 발생", Toast.LENGTH_SHORT);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<CheckSuccess> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
 
 
         // 초기화
@@ -1507,23 +1529,32 @@ public class MapFragment extends Fragment
 
 
     public void ScreenCapture() {
-        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
-
+        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
             public void onSnapshotReady(@Nullable Bitmap snapshot) {
                 if (snapshot == null) {
+                    Log.d(TAG,"snapshot null");
                     Toast.makeText(getActivity(), "snapshot null", Toast.LENGTH_SHORT).show();
                 } else {
                     Matrix m = new Matrix();
 
+                    Log.d(TAG,"snapshot not null");
+                    map_bitmap = snapshot;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    map_bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                     snapshot.compress(Bitmap.CompressFormat.PNG, 100, baos);
                     byte[] bytes = baos.toByteArray();
                     image = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+                    if (ridingPauseMarker != null) {
+                        ridingPauseMarker.remove(); // 중지 지점 삭제
+                    }
+                    if (ridingStartMarker != null) {
+                        ridingStartMarker.remove();
+                    }
                 }
             }
-        };
-        mMap.snapshot(callback);
+        });
     }
 
 

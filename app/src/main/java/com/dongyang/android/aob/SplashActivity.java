@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-//                 자동 로그인 여부 체크
+                 // 자동 로그인 여부 체크
                 if(autoLogin == false) {
                     // 자동 로그인 하지 않았을 경우 로그인으로 이동하며 세션 영역 내 정보 삭제
                     editor.clear();

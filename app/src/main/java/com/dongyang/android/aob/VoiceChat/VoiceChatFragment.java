@@ -30,7 +30,7 @@ public class VoiceChatFragment extends Fragment {
             public void run() {
                 try{
                     // TODO Auto-generated method stub
-                    Intent i = new Intent( VoiceChatFragment.this.getActivity(), ChatStartActivity.class);
+                    Intent i = new Intent(VoiceChatFragment.this.getActivity(), ChatStartActivity.class);
                     startActivity(i);
                 }
                 catch(Exception e) {
