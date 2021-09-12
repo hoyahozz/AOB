@@ -66,5 +66,13 @@ public class Measure {
         this.kcal = kcal;
     }
 
-
+    public Measure(boolean success, int mnum, String id, String image, int time, double dist, double kcal) {
+        this.success = success;
+        this.mnum = mnum;
+        this.id = id;
+        this.image = image;
+        this.time = time;
+        this.dist = dist;
+        this.kcal = kcal;
+    }
 }

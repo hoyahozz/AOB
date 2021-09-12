@@ -1541,10 +1541,8 @@ public class MapFragment extends Fragment
                     Log.d(TAG,"snapshot not null");
                     map_bitmap = snapshot;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    map_bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                   //  map_bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                     snapshot.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                    byte[] bytes = baos.toByteArray();
-                    image = Base64.encodeToString(bytes, Base64.DEFAULT);
 
                     if (ridingPauseMarker != null) {
                         ridingPauseMarker.remove(); // 중지 지점 삭제

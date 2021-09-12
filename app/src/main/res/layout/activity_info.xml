@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/info_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,6 +14,7 @@
         android:layout_height="60dp"
         android:background="@color/green">
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -23,188 +25,219 @@
             android:textSize="30sp" />
     </androidx.appcompat.widget.Toolbar>
 
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/info_user_cardView"
-        android:layout_width="153dp"
-        android:layout_height="153dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="75dp">
-
-        <ImageView
-            android:id="@+id/info_user_profile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/item_user_image" />
-    </androidx.cardview.widget.CardView>
-
-
-    <TextView
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/nanum_square_eb"
-        android:gravity="center"
-        android:text="김 이엘"
-        android:textColor="@color/black"
-        android:textSize="25sp" />
-
-
-    <View
-        android:layout_width="300dp"
-        android:layout_height="1dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="15dp"
-        android:background="@color/gray" />
-
-    <LinearLayout
-
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="1,2378 Km"
-            android:textColor="@color/black"
-            android:fontFamily="@font/nanum_square_eb"
-            android:textSize="32sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nanum_square"
-            android:gravity="center"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/gray"
-            android:text="주행 거리"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
-
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_square"
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/info_user_cardView"
+                android:layout_width="153dp"
+                android:layout_height="153dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:layout_gravity="center"
-                android:text="20655 분"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="75dp">
+
+                <ImageView
+                    android:id="@+id/info_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/item_user_image" />
+            </androidx.cardview.widget.CardView>
+
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/nanum_square_eb"
+                android:gravity="center"
+                android:text="김 이엘"
                 android:textColor="@color/black"
-                android:textSize="22sp" />
+                android:textSize="25sp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray" />
+
+            <LinearLayout
+
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/info_sum_dist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nanum_square_eb"
+                    android:gravity="center"
+                    android:text="1,2378 Km"
+                    android:textColor="@color/black"
+                    android:textSize="32sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/nanum_square"
+                    android:gravity="center"
+                    android:text="주행 거리"
+                    android:textColor="@color/gray"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/info_sum_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/nanum_square"
+                        android:text="20655 분"
+                        android:textColor="@color/black"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/nanum_square"
+                        android:text="주행 시간"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/info_sum_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/nanum_square"
+                        android:text="1500 회"
+                        android:textColor="@color/black"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/nanum_square"
+                        android:text="주행 횟수"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/info_sum_kcal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/nanum_square"
+                        android:text="3,450 kcal"
+                        android:textColor="@color/black"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/nanum_square"
+                        android:text="소모 칼로리"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:background="@color/gray" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_square"
-                android:layout_gravity="center"
-                android:layout_marginTop="2dp"
-                android:text="주행 시간"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/nanum_barun_gothic"
+                android:gravity="center"
+                android:text="최근 기록"
                 android:textColor="@color/gray"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:textSize="20sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/info_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp" />
 
-            <TextView
+
+            <Button
+                android:id="@+id/info_logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_square"
                 android:layout_gravity="center"
-                android:text="1500 회"
+                android:layout_marginTop="40dp"
+                android:background="@color/transparent"
+                android:fontFamily="@font/nanum_square"
+                android:text="로그아웃"
                 android:textColor="@color/black"
-                android:textSize="22sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_square"
-                android:layout_gravity="center"
-                android:layout_marginTop="2dp"
-                android:textColor="@color/gray"
-                android:text="주행 횟수"
-                android:textSize="12sp" />
-
-
+                android:textSize="15sp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_square"
-                android:layout_gravity="center"
-                android:text="3,450 kcal"
-                android:textColor="@color/black"
-                android:textSize="22sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_square"
-                android:layout_gravity="center"
-                android:layout_marginTop="2dp"
-                android:text="소모 칼로리"
-                android:textColor="@color/gray"
-                android:textSize="12sp" />
-
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/info_mapImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:src="@drawable/logo_aob"
-        android:layout_marginTop="20dp"/>
-
-
-    <Button
-        android:id="@+id/info_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="center"
-        android:background="@color/transparent"
-        android:fontFamily="@font/nanum_square"
-        android:text="로그아웃"
-        android:textColor="@color/black"
-        android:textSize="15sp" />
-
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

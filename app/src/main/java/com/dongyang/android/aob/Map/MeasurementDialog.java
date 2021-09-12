@@ -20,15 +20,19 @@ import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
 import com.dongyang.android.aob.LoadingDialog;
 import com.dongyang.android.aob.Map.Service.MeasureService;
 import com.dongyang.android.aob.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-// 액티비티, 프래그먼트 전 영역에 사용되는 로딩 다이얼로그입니다.
+// 측정 다이얼로그 구성 클래스
 
 public class MeasurementDialog extends Dialog {
     public MeasurementDialog(@NonNull Context context, Bitmap bitmap, String userId, int f_timer, double sum_dist, double kcal) {
@@ -53,7 +57,10 @@ public class MeasurementDialog extends Dialog {
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] bytes = baos.toByteArray();
+
+//        mapImage_String = "&image="+ byteArrayToBinaryString(bytes);
         mapImage_String = Base64.encodeToString(bytes, Base64.DEFAULT);
 
         insertButton.setOnClickListener(new View.OnClickListener() {
@@ -62,9 +69,10 @@ public class MeasurementDialog extends Dialog {
 
                 loadingDialog.show();
 
+                Gson gson = new GsonBuilder().setLenient().create();
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(MeasureService.MEASURE_URL)
-                        .addConverterFactory(GsonConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create(gson))
                         .build();
 
                 MeasureService retrofitAPI = retrofit.create(MeasureService.class);
@@ -87,6 +95,7 @@ public class MeasurementDialog extends Dialog {
 
                     @Override
                     public void onFailure(Call<CheckSuccess> call, Throwable t) {
+                        Log.d("Measurement", "Not Response");
                         loadingDialog.dismiss();
                         t.printStackTrace();
                     }
@@ -102,7 +111,24 @@ public class MeasurementDialog extends Dialog {
         });
 
 
-
-
     }
+
+    public static String byteArrayToBinaryString(byte[] b) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < b.length; ++i) {
+            sb.append(byteToBinaryString(b[i]));
+        }
+        return sb.toString();
+    }
+
+    public static String byteToBinaryString(byte n) {
+        StringBuilder sb = new StringBuilder("00000000");
+        for (int bit = 0; bit < 8; bit++) {
+            if (((n >> bit) & 1) > 0) {
+                sb.setCharAt(7 - bit, '1');
+            }
+        }
+        return sb.toString();
+    }
+
 }
