@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#94c995"
-            android:text="후방모습"/>
-    </LinearLayout>
-
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:clickable="true" >
-    </WebView>
+    android:orientation="vertical"
+    tools:context=".Safety.StreamingFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnmain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:backgroundTint="#94c995"
-        android:gravity="center"
-        android:text="메인으로 이동" />
+        android:layout_weight="2.2"
+        android:orientation="vertical">
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="7.8">
+
+        <Button
+            android:id="@+id/btnmain"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop= "60dp"
+            android:background="@drawable/style_rounded_postive_button"
+            android:fontFamily="@font/nanum_square_eb"
+            android:gravity="center"
+            android:text="캡처하기"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </LinearLayout>

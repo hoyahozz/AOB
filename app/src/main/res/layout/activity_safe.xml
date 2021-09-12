@@ -16,9 +16,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="30dp"
         android:gravity="center"
+        android:fontFamily="@font/nanum_barun_gothic"
         android:text="넘어지셨습니까?"
         android:textSize="30dp" />
 
@@ -32,6 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:fontFamily="@font/nanum_barun_gothic"
             android:text="단순히 자전거가 넘어졌거나 가벼운 부상인 경우"
             android:textSize="15dp" />
 
@@ -39,6 +43,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textStyle="bold"
             android:text="'아니오'"
             android:textColor="#049b50"
             android:textSize="20dp" />
@@ -59,12 +65,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:fontFamily="@font/nanum_barun_gothic"
                 android:text="를 눌러주시고 움직일 수 없을 정도로 부상을 입으신 경우" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:fontFamily="@font/nanum_barun_gothic"
+                android:textStyle="bold"
                 android:text=" '예'"
                 android:textColor="#049b50"
                 android:textSize="20dp" />
@@ -73,7 +82,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/nanum_barun_gothic"
             android:text=" 버튼을 눌러주세요." />
     </LinearLayout>
 
@@ -89,7 +102,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="50dp"
-            android:backgroundTint="#94c995"
+            android:background="@drawable/style_rounded_postive_button"
+            android:fontFamily="@font/nanum_square_eb"
+            android:textStyle="bold"
             android:text="예"
             android:textColor="@android:color/white" />
 
@@ -97,7 +112,9 @@
             android:id="@+id/btnN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#94c995"
+            android:background="@drawable/style_rounded_postive_button"
+            android:fontFamily="@font/nanum_square_eb"
+            android:textStyle="bold"
             android:text="아니오"
             android:textColor="@android:color/white" />
     </LinearLayout>
@@ -105,8 +122,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
+        android:fontFamily="@font/nanum_barun_gothic"
         android:text="* 일정시간이 지났는데도 어떠한 버튼을 누르지 않으신다면
                         긴급한 상황으로 판단해 자동으로 긴급 연락을 합니다."
         android:textColor="#049b50" />
