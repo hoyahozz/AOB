@@ -32,7 +32,6 @@ public class StreamingFragment extends Fragment {
         View streamingLayout = inflater.inflate(R.layout.fragment_streaming, container,false);
 
 
-        date = streamingLayout.findViewById(R.id.date);
         btnmain = streamingLayout.findViewById(R.id.btnmain);
         web = (WebView) streamingLayout.findViewById(R.id.webView);
         web.setWebViewClient(new TCWebViewClient()); // TCWebViewClient 클래스를 생성하여 웹뷰에 대입
@@ -46,12 +45,7 @@ public class StreamingFragment extends Fragment {
         web.getSettings().setSupportZoom(true);
         web.getSettings().setDisplayZoomControls(false);
 
-        // 이동 버튼 클릭
-        date.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                web.loadUrl("http://192.168.35.223:5000/stream?src=0"); // 입력한 URL 웹페이지가 웹뷰에 나타남
-            }
-        });
+
 
 //        btnmain.setOnClickListener(new View.OnClickListener() {
 //            @Override

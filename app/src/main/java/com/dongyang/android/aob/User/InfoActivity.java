@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -133,6 +134,23 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     public void logout() {
+
+        //*(9/8 추가) 사진 초기화 코드
+        try{
+            File file = new File("/data/user/0/com.dongyang.android.aob/files/capture");
+            File[] flist = file.listFiles();
+            //Toast.makeText(getApplicationContext(),"파일 삭제",Toast.LENGTH_LONG).show();
+            for(int i=0; i<flist.length; i++)
+            {
+                String fname = flist[i].getName();
+                if(fname.equals("file" + ".jpg")){
+                    flist[i].delete();
+                }
+            }
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_LONG).show();
+        }
+
         editor.clear();
         editor.commit();
         Intent intent = new Intent(InfoActivity.this, LoginActivity.class);

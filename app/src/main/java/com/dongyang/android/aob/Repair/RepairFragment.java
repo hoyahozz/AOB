@@ -62,12 +62,12 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class RepairFragment extends Fragment {
-    private View view;
+    //private View view;
 
     private static final String TAG = "RepairFragment";
-    private static final int PERMISSIONS_REQUEST_CODE = 100;
+    //private static final int PERMISSIONS_REQUEST_CODE = 100;
     public static final int REQUEST_TAKE_PHOTO = 10;
-    public static final int REQUEST_PERMISSION = 11;
+    //public static final int REQUEST_PERMISSION = 11;
 
     private Button btnCamera, btnSave;
     private ImageView ivCapture;
@@ -76,8 +76,7 @@ public class RepairFragment extends Fragment {
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
 
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +127,7 @@ public class RepairFragment extends Fragment {
         return repairLayout;
     }
 
+    //카메라 기능 실행
     private void captureCamera() {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -178,6 +178,7 @@ public class RepairFragment extends Fragment {
             // 로딩 다이얼로그 활성화
             loadingDialog = new LoadingDialog(this.getActivity());
             loadingDialog.show();
+
             //저장할 파일 경로
             Log.d(TAG, getActivity().getFilesDir().toString());
             File storageDir = new File(getActivity().getFilesDir() + "/capture");
@@ -208,13 +209,7 @@ public class RepairFragment extends Fragment {
                 }
             }
             Log.e(TAG, "Captured Saved");
-
             sendImg(file);
-
-//             Toast.makeText(this.getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
-//             Intent intent = new Intent(this.getActivity(), YoutubeActivity.class);
-//             startActivity(intent);
-
 
         } catch (Exception e) {
             Log.w(TAG, "Capture Saving Error!", e);
@@ -286,43 +281,13 @@ public class RepairFragment extends Fragment {
 
             File file = new File(storageDir, filename);
             Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
-
-
-            // 데이터베이스 (비트맵 형태로 데이터베이스 접속할 때)
-            //         String image = bitmapToByteAray(bitmap);
             ivCapture.setImageBitmap(bitmap);
+
         } catch (Exception e) {
             Log.w(TAG, "Capture loading Error", e);
             //Toast.makeText(this, "load failed", Toast.LENGTH_SHORT).show();
         }
     }
-
-//    public String bitmapToByteAray(Bitmap bitmap) {
-//        String image = "";
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//        byte[] byteArray = stream.toByteArray();
-//        image = "&image=" + byteArrayToBinaryString(byteArray);
-//        return image;
-//    }
-//
-//    public static String byteArrayToBinaryString(byte[] b) {
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < b.length; ++i) {
-//            sb.append(byteToBinaryString(b[i]));
-//        }
-//        return sb.toString();
-//    }
-//
-//    public static String byteToBinaryString(byte n) {
-//        StringBuilder sb = new StringBuilder("0000000");
-//        for (int bit = 0; bit < 8; bit++) {
-//            if (((n >> bit) & 1) > 0) {
-//                sb.setCharAt(7 - bit, '1');
-//            }
-//        }
-//        return sb.toString();
-//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -380,8 +345,6 @@ public class RepairFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
-
-
 
     final int MULTI_PERMISSION = 999;
 
