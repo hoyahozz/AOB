@@ -119,7 +119,10 @@ public class MeasurementAdapter
             Bitmap bitmap = StringToBitmaps(mapString);
 
             mapImg.setImageBitmap(bitmap);
-            date.setText(datas.get(position).getStart_time());
+            String m_date = datas.get(position).getStart_time();
+            m_date = m_date.substring(0 , m_date.length() - 6);
+            date.setText(m_date);
+
             dist.setText(String.valueOf(datas.get(position).getDist()) + " km");
             speed.setText(String.valueOf(datas.get(position).getAvg_speed()) + " km/h");
             time.setText(String.valueOf(datas.get(position).getTime() / 60) + " 분");
