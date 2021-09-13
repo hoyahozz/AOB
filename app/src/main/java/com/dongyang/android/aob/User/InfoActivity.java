@@ -66,7 +66,7 @@ public class InfoActivity extends AppCompatActivity {
     private MeasurementAdapter m_adapter;
 
     private int sum_dist = 0, sum_count = 0, sum_kcal = 0, sum_time = 0;
-    private TextView tv_sum_dist, tv_sum_count , tv_sum_kcal, tv_sum_time;
+    private TextView tv_sum_dist, tv_sum_count, tv_sum_kcal, tv_sum_time, tv_user_name, tv_measure_check;
 
 
     @Override
@@ -75,8 +75,6 @@ public class InfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info);
 
         loadingDialog = new LoadingDialog(this);
-
-        loadingDialog.show();
 
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         userName = pref.getString("name", "김이엘").toString();
@@ -91,6 +89,8 @@ public class InfoActivity extends AppCompatActivity {
         tv_sum_count = findViewById(R.id.info_sum_count);
         tv_sum_kcal = findViewById(R.id.info_sum_kcal);
         tv_sum_time = findViewById(R.id.info_sum_time);
+        tv_user_name = findViewById(R.id.info_user_name);
+        tv_measure_check = findViewById(R.id.info_no_measure);
 
         m_recyclerView.setHasFixedSize(true);
         m_recyclerView.addItemDecoration(new DividerItemDecoration(InfoActivity.this, DividerItemDecoration.VERTICAL)); // 구분선 지정
@@ -102,11 +102,15 @@ public class InfoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
-        pref = getSharedPreferences("userInfo", MODE_PRIVATE);
+        setText();
+
         editor = pref.edit();
 
-        if (userId != "")
-            setMapImage();
+        if (userId != "") {
+            loadingDialog.show();
+            tv_user_name.setText(userName);
+            setMeasurement();
+        }
 
 
 
@@ -136,19 +140,18 @@ public class InfoActivity extends AppCompatActivity {
     public void logout() {
 
         //*(9/8 추가) 사진 초기화 코드
-        try{
+        try {
             File file = new File("/data/user/0/com.dongyang.android.aob/files/capture");
             File[] flist = file.listFiles();
             //Toast.makeText(getApplicationContext(),"파일 삭제",Toast.LENGTH_LONG).show();
-            for(int i=0; i<flist.length; i++)
-            {
+            for (int i = 0; i < flist.length; i++) {
                 String fname = flist[i].getName();
-                if(fname.equals("file" + ".jpg")){
+                if (fname.equals("file" + ".jpg")) {
                     flist[i].delete();
                 }
             }
-        }catch (Exception e){
-            Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            // Toast.makeText(getApplicationContext(), "실패", Toast.LENGTH_LONG).show();
         }
 
         editor.clear();
@@ -168,9 +171,8 @@ public class InfoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setMapImage() {
+    public void setMeasurement() {
         Gson gson = new GsonBuilder().setLenient().create();
-
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MeasureService.MEASURE_URL)
@@ -178,6 +180,7 @@ public class InfoActivity extends AppCompatActivity {
                 .build();
 
         MeasureService retrofitAPI = retrofit.create(MeasureService.class);
+
 
         retrofitAPI.getMeasure(userId).enqueue(new Callback<List<Measure>>() {
             @Override
@@ -192,7 +195,6 @@ public class InfoActivity extends AppCompatActivity {
                     if (data.size() > 0) { // 데이터가 존재할 떄
                         sum_count = data.size();
 
-
                         for (int i = 0; i < data.size(); i++) {
 
                             boolean success = data.get(i).isSuccess();
@@ -201,6 +203,9 @@ public class InfoActivity extends AppCompatActivity {
                             String image = data.get(i).getImage();
                             double dist = data.get(i).getDist();
                             int time = data.get(i).getTime();
+                            String start_time = data.get(i).getStart_time();
+                            String end_time = data.get(i).getEnd_time();
+                            double avg_speed = data.get(i).getAvg_speed();
                             double kcal = data.get(i).getKcal();
 
 
@@ -214,22 +219,30 @@ public class InfoActivity extends AppCompatActivity {
                                     id,
                                     image,
                                     time,
+                                    start_time,
+                                    end_time,
+                                    avg_speed,
                                     dist,
                                     kcal
                             ));
                         }
-                        
+
                         m_adapter = new MeasurementAdapter(InfoActivity.this, m_datas);
                         m_recyclerView.setAdapter(m_adapter);
-                        
+
                         sum_time /= 60;
-                        tv_sum_dist.setText(sum_dist + " km");
-                        tv_sum_time.setText(sum_time + " 분");
-                        tv_sum_count.setText(sum_count + " 회");
-                        tv_sum_kcal.setText(sum_kcal + " kcal");
+
+                        setText();
+                        m_recyclerView.setVisibility(View.VISIBLE);
+                        tv_measure_check.setVisibility(View.GONE);
+                    } else {
+                        m_recyclerView.setVisibility(View.GONE);
+                        tv_measure_check.setVisibility(View.VISIBLE);
                     }
 
                 } else {
+                    m_recyclerView.setVisibility(View.GONE);
+                    tv_measure_check.setVisibility(View.VISIBLE);
                     Toast.makeText(getApplicationContext(), "데이터가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
                 }
 
@@ -238,26 +251,26 @@ public class InfoActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Measure>> call, Throwable t) {
                 loadingDialog.dismiss();
+                tv_measure_check.setVisibility(View.VISIBLE);
                 Toast.makeText(getApplicationContext(), "서버 네트워크가 닫혀있습니다.", Toast.LENGTH_LONG).show();
                 t.printStackTrace();
             }
+
+
+
+
         });
-
-
-
     }
 
-    public Bitmap StringToBitmaps(String image) {
-        Log.e("StringToBitMap", "StringToBitMap");
-        try {
-            byte[] encodeByte = Base64.decode(image, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            Log.e("StringToBitMap", "good");
-            // mapImage.setImageBitmap(bitmap);
-            return bitmap;
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
+    public void setText() {
+        tv_sum_dist.setText(sum_dist + " km");
+        tv_sum_time.setText(sum_time + " 분");
+        tv_sum_count.setText(sum_count + " 회");
+        tv_sum_kcal.setText(sum_kcal + " kcal");
+
+        tv_sum_dist.setVisibility(View.VISIBLE);
+        tv_sum_time.setVisibility(View.VISIBLE);
+        tv_sum_count.setVisibility(View.VISIBLE);
+        tv_sum_kcal.setVisibility(View.VISIBLE);
     }
 }

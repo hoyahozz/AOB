@@ -594,7 +594,7 @@ public class MapFragment extends Fragment
                     // 기록 측정 시작 시간
                     long now = System.currentTimeMillis();
                     Date date = new Date(now);
-                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.dd HH:mm");
                     s_time = sdfNow.format(date);
 
                     // 기록 측정은 locationCallback 참조
@@ -1390,7 +1390,7 @@ public class MapFragment extends Fragment
         // 기록 측정 종료 시간
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.dd HH:mm");
         f_time = sdfNow.format(date);
 
 
@@ -1405,7 +1405,7 @@ public class MapFragment extends Fragment
         // String measure_data = kcal + " " + sum_dist + " " + avg_speed + " " + timer; // 파이썬 소켓통신으로 보낼 데이터
         // connect("Measure " + String.valueOf(measure_data));
 
-        int f_timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
+        int timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
 
 
 
@@ -1416,51 +1416,25 @@ public class MapFragment extends Fragment
                     @Override
                     public void onMapLoaded() {
                         loadingDialog.dismiss(); //
-                        measurementDialog = new MeasurementDialog(getActivity(), map_bitmap, userId, f_timer, sum_dist, kcal);
+                        measurementDialog = new MeasurementDialog(getActivity(), map_bitmap, userId, timer, s_time, f_time, avg_speed, sum_dist, kcal);
                         measurementDialog.show();
+
+                        // 초기화
+                        bike_timer.setBase(SystemClock.elapsedRealtime());
+                        pauseOffset = 0;
+                        sum_dist = 0;
+                        avg_speed = 0;
+                        s_lat = "";
+                        s_long = "";
+                        s_time = ""; // 시작 지점 GPS 정보 초기화
+                        f_lat = "";
+                        f_long = "";
+                        f_time = ""; // 종료 지점 GPS 정보 초기화
                     }
                 });
             }
         }, 500);
 
-
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(MeasureService.MEASURE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        MeasureService retrofitAPI = retrofit.create(MeasureService.class);
-//
-//        // 데이터베이스 저장
-//        retrofitAPI.insertMeasure(userId, image, f_timer, sum_dist, 10.00).enqueue(new Callback<CheckSuccess>() {
-//            @Override
-//            public void onResponse(Call<CheckSuccess> call, retrofit2.Response<CheckSuccess> response) {
-//                if (response.isSuccessful()) {
-//                    Log.d("Measurement", "Response");
-//                    Toast.makeText(getActivity(), "성공적으로 추가됐어요! 좌측 상단의 새로고침을 눌러보세요.", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(getActivity(), "오류 발생", Toast.LENGTH_SHORT);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CheckSuccess> call, Throwable t) {
-//                t.printStackTrace();
-//            }
-//        });
-
-
-        // 초기화
-        bike_timer.setBase(SystemClock.elapsedRealtime());
-        pauseOffset = 0;
-        sum_dist = 0;
-        avg_speed = 0;
-        s_lat = "";
-        s_long = "";
-        s_time = ""; // 시작 지점 GPS 정보 초기화
-        f_lat = "";
-        f_long = "";
-        f_time = ""; // 종료 지점 GPS 정보 초기화
 
 
         bike_avg_speed.setText("0.0 km/h");

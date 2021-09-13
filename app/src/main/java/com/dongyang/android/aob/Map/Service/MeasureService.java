@@ -45,6 +45,9 @@ public interface MeasureService {
             @Field("id") String id,
             @Field("image") String image,
             @Field("time") int time,
+            @Field("start_time") String start_time,
+            @Field("end_time") String end_time,
+            @Field("avg_speed") double avg_speed,
             @Field("dist") double dist,
             @Field("kcal") double kcal
     );

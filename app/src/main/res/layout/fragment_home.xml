@@ -7,72 +7,96 @@
     android:orientation="vertical"
     tools:context=".Main.HomeFragment">
 
-    <TextView
-        android:id="@+id/home_user_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="30dp"
-        android:fontFamily="@font/nanum_barun_gothic"
-        android:text="김이엘 님!"
-        android:textColor="@color/black"
-        android:textSize="35sp" />
+        android:layout_weight="0"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/nanum_barun_gothic"
-        android:text="오늘도 즐겁게 라이딩해볼까요?"
-        android:textColor="@color/gray"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/home_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text="김이엘 님!"
+            android:textColor="@color/black"
+            android:textSize="35sp" />
 
-    <ImageView
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="35dp"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text="오늘도 즐겁게 라이딩해볼까요?"
+            android:textColor="@color/gray"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:src="@drawable/ic_weather_sunny" />
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="35dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_weather_sunny" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/nanum_barun_gothic"
+                android:text="오늘의 날씨는 맑음 이에요!"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/nanum_barun_gothic"
+                android:text="걱정없이 달려도 되겠어요!"
+                android:textColor="@color/gray"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/home_measurement"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:fontFamily="@font/nanum_barun_gothic"
-            android:text="오늘의 날씨는 맑음 이에요!"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:layout_marginBottom="35dp"
+            android:background="@drawable/style_rounded_postive_button"
+            android:fontFamily="@font/nanum_square_eb"
+            android:text="라이딩 하러가기"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/nanum_barun_gothic"
-            android:text="걱정없이 달려도 되겠어요!"
-            android:textColor="@color/gray"
-            android:textSize="15sp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/home_measurement"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="35dp"
-        android:background="@drawable/style_rounded_postive_button"
-        android:fontFamily="@font/nanum_square_eb"
-        android:text="라이딩 하러가기"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
 
 
 </LinearLayout>

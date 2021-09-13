@@ -98,12 +98,13 @@ public class MeasurementAdapter
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mapImg;
-        TextView dist, speed, time;
+        TextView date, dist, speed, time;
         String mapString;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            date = itemView.findViewById(R.id.measure_date);
             mapImg = itemView.findViewById(R.id.measure_image);
             dist = itemView.findViewById(R.id.measure_dist);
             speed = itemView.findViewById(R.id.measure_speed);
@@ -118,9 +119,10 @@ public class MeasurementAdapter
             Bitmap bitmap = StringToBitmaps(mapString);
 
             mapImg.setImageBitmap(bitmap);
+            date.setText(datas.get(position).getStart_time());
             dist.setText(String.valueOf(datas.get(position).getDist()) + " km");
-            speed.setText(String.valueOf(datas.get(position).getKcal()) + " km/h");
-            time.setText(String.valueOf(datas.get(position).getTime()) + " 분");
+            speed.setText(String.valueOf(datas.get(position).getAvg_speed()) + " km/h");
+            time.setText(String.valueOf(datas.get(position).getTime() / 60) + " 분");
 
 
 

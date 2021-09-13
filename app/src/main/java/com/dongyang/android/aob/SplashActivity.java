@@ -27,23 +27,23 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-//                 // 자동 로그인 여부 체크
-//                if(autoLogin == false) {
-//                    // 자동 로그인 하지 않았을 경우 로그인으로 이동하며 세션 영역 내 정보 삭제
-//                    editor.clear();
-//                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                } else {
-//                    // 자동 로그인 체크하였을 경우 바로 메인 액티비티로 이동
-//                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                }
+                 // 자동 로그인 여부 체크
+                if(autoLogin == false) {
+                    // 자동 로그인 하지 않았을 경우 로그인으로 이동하며 세션 영역 내 정보 삭제
+                    editor.clear();
+                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // 자동 로그인 체크하였을 경우 바로 메인 액티비티로 이동
+                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
 
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+//                startActivity(intent);
+//                finish();
             }
         }, 2500);
     }
