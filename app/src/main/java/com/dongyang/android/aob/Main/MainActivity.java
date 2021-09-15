@@ -298,7 +298,9 @@ public class MainActivity extends AppCompatActivity {
         ridingFragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_container, ridingFragment, "riding").commit();
+        fragmentTransaction.remove(ridingFragment).commit();
+        fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
+        fragmentManager.beginTransaction().add(R.id.main_container, ridingFragment, "riding").commit();
     }
 
     @Override

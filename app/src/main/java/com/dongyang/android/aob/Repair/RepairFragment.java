@@ -19,7 +19,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -35,6 +38,8 @@ import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Repair.Model.Result;
 import com.dongyang.android.aob.Repair.Service.DeepRunningService;
+import com.dongyang.android.aob.SplashActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -73,6 +78,8 @@ public class RepairFragment extends Fragment {
     private ImageView ivCapture;
     private String mCurrentPhotoPath;
     private LoadingDialog loadingDialog;
+    BottomNavigationView main_bnv;
+    FragmentManager fragmentManager;
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
 
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.CAMERA,
@@ -89,14 +96,16 @@ public class RepairFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View repairLayout = inflater.inflate(R.layout.fragment_repair, container, false);
-
         mLayout = repairLayout.findViewById(R.id.repairLayout);
-
-        checkPermission(); //권한체크
-
         ivCapture = repairLayout.findViewById(R.id.ivCapture); //imageView 선언
         btnCamera = repairLayout.findViewById(R.id.btnCapture); // button 선언
         btnSave = repairLayout.findViewById(R.id.btnSave); //button 선언
+
+
+        main_bnv = getActivity().findViewById(R.id.main_bnv);
+        fragmentManager = getActivity().getSupportFragmentManager();
+
+
 
 
         loadImgArr();
@@ -125,6 +134,13 @@ public class RepairFragment extends Fragment {
         });
 
         return repairLayout;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        checkPermission(); // 스낵바는 뷰를 변경하는 개념인데, OnCreateView 부근에서는 뷰가 완전히 완성되지 않음
+        // 그렇기 때문에 완전히 뷰가 생성된 후에 퍼미션을 진행해 스낵바를 사용할 수 있게끔 하였음
     }
 
     //카메라 기능 실행
@@ -357,7 +373,7 @@ public class RepairFragment extends Fragment {
             if (REQUIRED_PERMISSIONS.length > 0) {
                 int check = 0;
                 for (String data : REQUIRED_PERMISSIONS) {
-                    check = ContextCompat.checkSelfPermission(getActivity(), data);
+                    check = ContextCompat.checkSelfPermission(this.getActivity(), data);
                     if (check != PackageManager.PERMISSION_GRANTED) {
                         permissionNO.add(data);
                     } else {
@@ -365,7 +381,22 @@ public class RepairFragment extends Fragment {
                     }
                 }
                 if (permissionNO.size() > 0) { // 퍼미션 거부된 값이 있을 경우
-                    requestPermissions(permissionNO.toArray(new String[permissionNO.size()]), MULTI_PERMISSION);
+
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[1])) {
+                        Snackbar.make(mLayout, "자가수리 기능을 실행하려면 접근 권한이 필요해요!",
+                                Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                // 3-3. 사용자에게 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+                                requestPermissions(permissionNO.toArray(new String[permissionNO.size()]), MULTI_PERMISSION);
+                            }
+                        }).show();
+                    } else {
+                        requestPermissions(permissionNO.toArray(new String[permissionNO.size()]), MULTI_PERMISSION);
+                    }
+
                 } else {
                     getPermissionOK();
                 }
@@ -379,6 +410,8 @@ public class RepairFragment extends Fragment {
 
     public void getPermissionOK() {
         try {
+            btnSave.setEnabled(true);
+            btnCamera.setEnabled(true);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -409,25 +442,28 @@ public class RepairFragment extends Fragment {
 
                         // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[0])
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[1])
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[2])) {
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[1])) {
 
                             // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있습니다.
-                            Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요. ",
+                            Snackbar.make(mLayout, "퍼미션을 거부하시면 해당 기능을 이용할 수 없어요! 퍼미션을 허용해주세요.",
                                     Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    getActivity().finish();
+                                    fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
+                                    fragmentManager.beginTransaction().remove(RepairFragment.this).commit();
+                                    main_bnv.getMenu().findItem(R.id.navigation_home).setChecked(true);
                                 }
                             }).show();
 
                         } else {
                             // "다시 묻지 않음"을 사용자가 체크하고 거부를 선택한 경우에는 설정(앱 정보)에서 퍼미션을 허용해야 앱을 사용할 수 있습니다.
-                            Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다.",
+                            Snackbar.make(mLayout, "퍼미션이 완전히 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다.",
                                     Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    getActivity().finish();
+                                    fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
+                                    fragmentManager.beginTransaction().remove(RepairFragment.this).commit();
+                                    main_bnv.getMenu().findItem(R.id.navigation_home).setChecked(true);
                                 }
                             }).show();
                         }

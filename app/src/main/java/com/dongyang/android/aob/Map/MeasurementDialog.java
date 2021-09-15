@@ -97,7 +97,6 @@ public class MeasurementDialog extends Dialog {
 
                 MeasureService retrofitAPI = retrofit.create(MeasureService.class);
 
-
                 // 데이터베이스 저장
                 retrofitAPI.insertMeasure(userId, mapImage_String, timer, s_time, f_time, avg_speed, sum_dist, 10.00).enqueue(new Callback<CheckSuccess>() {
                     @Override

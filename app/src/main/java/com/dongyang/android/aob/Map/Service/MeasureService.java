@@ -24,21 +24,6 @@ public interface MeasureService {
             @Query("id") String id
     );
 
-//    @GET("outmeasure.php")
-//    Call<List<Measure>> getMeasures(
-//            @Query("id") String id
-//    );
-//
-//    @FormUrlEncoded
-//    @POST("inmeasure.php")
-//    Call<CheckSuccess> insertMeasures(
-//            @Field("id") String id,
-//            @Field("image") String image,
-//            @Field("time") int time,
-//            @Field("dist") double dist,
-//            @Field("kcal") double kcal
-//    );
-
     @FormUrlEncoded
     @POST("/android/userinfo/measure/measurement.php")
     Call<CheckSuccess> insertMeasure(

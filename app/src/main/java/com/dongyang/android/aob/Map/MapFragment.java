@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -53,6 +54,7 @@ import com.dongyang.android.aob.BuildConfig;
 import com.dongyang.android.aob.Introduction.Activity.LoginActivity;
 import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
 import com.dongyang.android.aob.LoadingDialog;
+import com.dongyang.android.aob.Main.HomeFragment;
 import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.Map.Marker.BikeRenderer;
 import com.dongyang.android.aob.Map.Model.Bike.BikeItem;
@@ -60,6 +62,7 @@ import com.dongyang.android.aob.Map.Model.Bike.RentBikeStatus;
 import com.dongyang.android.aob.Map.Model.Bike.Row;
 import com.dongyang.android.aob.Map.Model.Bike.SeoulBike;
 import com.dongyang.android.aob.Map.Service.MeasureService;
+import com.dongyang.android.aob.Repair.RepairFragment;
 import com.dongyang.android.aob.SplashActivity;
 import com.dongyang.android.aob.User.FavoriteActivity;
 import com.dongyang.android.aob.User.Model.Favorite;
@@ -83,6 +86,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -116,6 +120,8 @@ public class MapFragment extends Fragment
 
     private LatLng SEOUL_LOCATION = new LatLng(37.56, 126.97);
 
+    FragmentManager fragmentManager;
+    BottomNavigationView main_bnv;
 
     private MapView mapView = null;
     private GoogleMap mMap;
@@ -131,6 +137,7 @@ public class MapFragment extends Fragment
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int UPDATE_INTERVAL_MS = 3000;  // 3초
     private static final int FASTEST_UPDATE_INTERVAL_MS = 2500; // 2.5초
+
 
     private Handler mHandler; // 소켓 통신 핸들러
     private Socket socket;
@@ -259,6 +266,8 @@ public class MapFragment extends Fragment
         bikeBottomSheet.setVisibility(View.GONE);
         loadingDialog = new LoadingDialog(this.getActivity());
         seoulBike_controller = mapLayout.findViewById(R.id.map_seoulBike_controller);
+        fragmentManager = getActivity().getSupportFragmentManager();
+        main_bnv = getActivity().findViewById(R.id.main_bnv);
 
         get_favorite_lat = getArguments().getDouble("favorite_lat", 0);
         get_favorite_long = getArguments().getDouble("favorite_long", 0);
@@ -498,11 +507,14 @@ public class MapFragment extends Fragment
 
         if (bikeON == true) {
 
-            if (mCurrentLocation != null) { // 현재 위치가 있으면 바로 실행
-                ReadyMeasurement();
-            } else { // 현재 위치가 없으면 잡을 때까지 로딩
-                loadingDialog.show();
-                bFirst = 0;
+            if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                    hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                if (mCurrentLocation != null) { // 현재 위치가 있으면 바로 실행
+                    ReadyMeasurement();
+                } else { // 현재 위치가 없으면 잡을 때까지 로딩
+                    loadingDialog.show();
+                    bFirst = 0;
+                }
             }
         }
 
@@ -710,7 +722,7 @@ public class MapFragment extends Fragment
                     dist = (int) (dist * 100) / 100.0;
                     Log.d("dist", String.valueOf(dist));
                     sum_dist += dist;
-                    sum_dist = (sum_dist * 100) / 100.0;
+                    sum_dist = Math.round(sum_dist * 1000) / 100.0;
                     Log.d("sum_dist", String.valueOf(sum_dist));
                     // 평균 속도 계산
                     now_speed = (dist / timer) * 3.6; // 현재 속도
@@ -718,7 +730,7 @@ public class MapFragment extends Fragment
                     double avg_speed2 = 0;
                     if (timer != 0) {
                         avg_speed = (sum_dist / timer) * 3.6; // km/h 로 변환
-                        avg_speed = (avg_speed * 100);
+                        avg_speed = Math.round(avg_speed * 1000) / 100.0;
                         // avg_speed = (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
                     } else {
                         avg_speed = 0;
@@ -1119,18 +1131,20 @@ public class MapFragment extends Fragment
                         || ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), REQUIRED_PERMISSIONS[1])) {
 
                     // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있습니다.
-                    Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요. ",
+                    Snackbar.make(mLayout, "퍼미션을 거부하시면 해당 기능을 이용할 수 없어요! 퍼미션을 허용해주세요. ",
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                         @Override
                         public void onClick(View view) {
-                            getActivity().finish();
+                            fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
+                            fragmentManager.beginTransaction().remove(MapFragment.this).commit();
+                            main_bnv.getMenu().findItem(R.id.navigation_home).setChecked(true);
                         }
                     }).show();
 
                 } else {
                     // "다시 묻지 않음"을 사용자가 체크하고 거부를 선택한 경우에는 설정(앱 정보)에서 퍼미션을 허용해야 앱을 사용할 수 있습니다.
-                    Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
+                    Snackbar.make(mLayout, "퍼미션이 완전히 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                         @Override
@@ -1395,19 +1409,19 @@ public class MapFragment extends Fragment
         f_time = sdfNow.format(date);
 
 
-        double kcal = MeasureCalorie(1500, 25.0);
-
         Log.d("최종 라이딩 정보", "총 라이딩 시간 : " + timer + " 총 라이딩 거리 :" + sum_dist);
         Log.d("최종 라이딩 정보", "시작시간 : " + s_time + " 시작지점 경도 :" + s_lat + " 시작지점 위도 : " + s_long);
         Log.d("최종 라이딩 정보", "종료시간 : " + f_time + " 종료지점 경도 :" + f_lat + " 종료지점 위도 : " + f_long);
-        Log.d("최종 라이딩 정보", "칼로리 : " + String.valueOf(kcal));
+
 
         // 소켓 통신
         // String measure_data = kcal + " " + sum_dist + " " + avg_speed + " " + timer; // 파이썬 소켓통신으로 보낼 데이터
         // connect("Measure " + String.valueOf(measure_data));
 
         int timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
+        double kcal = MeasureCalorie(timer, avg_speed);
 
+        Log.d("최종 라이딩 정보", "칼로리 : " + String.valueOf(kcal));
 
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() { // 텀을 안주면 스크린샷이 하얀색으로 나옴
@@ -1435,7 +1449,6 @@ public class MapFragment extends Fragment
                 });
             }
         }, 500);
-
 
 
         bike_avg_speed.setText("0.0 km/h");
@@ -1508,15 +1521,15 @@ public class MapFragment extends Fragment
             @Override
             public void onSnapshotReady(@Nullable Bitmap snapshot) {
                 if (snapshot == null) {
-                    Log.d(TAG,"snapshot null");
+                    Log.d(TAG, "snapshot null");
                     Toast.makeText(getActivity(), "snapshot null", Toast.LENGTH_SHORT).show();
                 } else {
                     Matrix m = new Matrix();
 
-                    Log.d(TAG,"snapshot not null");
+                    Log.d(TAG, "snapshot not null");
                     map_bitmap = snapshot;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                   //  map_bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    //  map_bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                     snapshot.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
                     if (ridingPauseMarker != null) {
