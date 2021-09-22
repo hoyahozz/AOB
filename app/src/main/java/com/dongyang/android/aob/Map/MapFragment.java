@@ -722,7 +722,7 @@ public class MapFragment extends Fragment
                     dist = (int) (dist * 100) / 100.0;
                     Log.d("dist", String.valueOf(dist));
                     sum_dist += dist;
-                    sum_dist = Math.round(sum_dist * 1000) / 100.0;
+                    sum_dist = Math.round(sum_dist * 100) / 100.0;
                     Log.d("sum_dist", String.valueOf(sum_dist));
                     // 평균 속도 계산
                     now_speed = (dist / timer) * 3.6; // 현재 속도
@@ -730,7 +730,7 @@ public class MapFragment extends Fragment
                     double avg_speed2 = 0;
                     if (timer != 0) {
                         avg_speed = (sum_dist / timer) * 3.6; // km/h 로 변환
-                        avg_speed = Math.round(avg_speed * 1000) / 100.0;
+                        avg_speed = Math.round(avg_speed * 100) / 100.0;
                         // avg_speed = (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
                     } else {
                         avg_speed = 0;

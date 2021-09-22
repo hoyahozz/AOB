@@ -1,6 +1,7 @@
 package com.dongyang.android.aob.User.Adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
 import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.Map.Model.Measurement.Measure;
 import com.dongyang.android.aob.R;
+import com.dongyang.android.aob.User.InfoMeasurementDialog;
 import com.dongyang.android.aob.User.Model.Favorite;
 import com.dongyang.android.aob.User.Service.FavoriteService;
 
@@ -116,42 +118,40 @@ public class MeasurementAdapter
         private void bind(Context context, List<Measure> datas, int position) {
 
             mapString = datas.get(position).getImage();
-            Bitmap bitmap = StringToBitmaps(mapString);
+            int get_time = datas.get(position).getTime() / 60;
+            String get_start_time = datas.get(position).getStart_time();
+            double get_kcal = datas.get(position).getKcal();
+            double get_dist = datas.get(position).getDist();
+            double get_avg_speed = datas.get(position).getAvg_speed();
+            Bitmap mapBitmap = StringToBitmaps(mapString);
 
-            mapImg.setImageBitmap(bitmap);
+            mapImg.setImageBitmap(mapBitmap);
             String m_date = datas.get(position).getStart_time();
-            m_date = m_date.substring(0 , m_date.length() - 6);
+            m_date = m_date.substring(0, m_date.length() - 6);
             date.setText(m_date);
 
-            dist.setText(String.valueOf(datas.get(position).getDist()) + " km");
-            speed.setText(String.valueOf(datas.get(position).getAvg_speed()) + " km/h");
-            time.setText(String.valueOf(datas.get(position).getTime() / 60) + " 분");
+            dist.setText(get_dist + " km");
+            speed.setText(get_avg_speed + " km/h");
+            time.setText(get_time + " 분");
 
 
-
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent intent = new Intent(context, MainActivity.class);
-//                    intent.putExtra("f_lat", latitude);
-//                    intent.putExtra("f_long", longitude);
-//                    intent.putExtra("value", 1);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    context.startActivity(intent);
-//                    ((Activity)context).finish();
-//
-//                    // Toast.makeText(context, fnum + "(fnum) 클릭하였음.", Toast.LENGTH_SHORT).show();
-//                }
-//            });
+            // 측정 버튼 눌렀을 때 행동
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Dialog InfoMeasurementDialog = new InfoMeasurementDialog(context, mapBitmap, get_time, get_start_time, get_avg_speed, get_dist, get_kcal);
+                    InfoMeasurementDialog.show();
+                }
+            });
 
         }
     }
 
     public static void deleteFavorite(Context context, int fnum) {
         SharedPreferences pref = context.getSharedPreferences("userInfo", MODE_PRIVATE);
-        String userId =  pref.getString("id","");
+        String userId = pref.getString("id", "");
 
-        if(userId == "") {
+        if (userId == "") {
             Toast.makeText(context, "오류가 발생하였습니다. 어플을 재실행 해주세요.", Toast.LENGTH_SHORT).show();
         } else {
 
