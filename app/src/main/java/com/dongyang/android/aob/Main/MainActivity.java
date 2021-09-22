@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 ;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView main_bnv;
     private ImageView userImage;
     private PermissionSupport permission;
+    private long backKeyPressedTime = 0;
 
 //    Fragment homeFragment, mapFragment, voiceChatFragment, repairFragment;
 
@@ -347,5 +349,28 @@ public class MainActivity extends AppCompatActivity {
 //            permission.requestPermission();
 //        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+
+        // 마지막으로 뒤로가기 버튼을 눌렀던 시간에 2초를 더해 현 시간과 비교
+        // 마지막으로 뒤로가기 버튼을 누른 시간이 2초가 지났으면 안내메시지 출력
+
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            Toast.makeText(this, "\'뒤로가기\' 버튼을 한번 더 누르면 종료돼요!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 마지막으로 뒤로가기 버튼 누른 시간이 2초가 지나지 않았으면 바로 종료
+        // 즉, 뒤로가기 버튼 두 번을 눌러야 종료되는 메커니즘임
+
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            finish();
+        }
     }
 }
