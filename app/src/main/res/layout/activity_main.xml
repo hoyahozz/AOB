@@ -34,11 +34,11 @@
             app:cardCornerRadius="75dp">
 
             <ImageView
-                android:id="@+id/roundedimage"
+                android:id="@+id/main_user_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/item_user_image"/>
+                android:src="@drawable/ic_profile_female_green"/>
         </androidx.cardview.widget.CardView>
 
 <!--

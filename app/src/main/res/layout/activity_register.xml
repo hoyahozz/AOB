@@ -44,13 +44,13 @@
                 android:textSize="30sp" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/info_user_cardView"
+                android:id="@+id/register_user_cardView"
                 android:layout_width="153dp"
                 android:layout_height="153dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:clickable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 app:cardCornerRadius="75dp">
@@ -60,14 +60,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/item_user_image" />
+                    android:src="@drawable/ic_profile_female_green" />
             </androidx.cardview.widget.CardView>
 
             <TextView
                 android:layout_width="330dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/nanum_square"
                 android:text="클릭하면 이미지를 선택할 수 있어요."
                 android:textColor="@color/gray"

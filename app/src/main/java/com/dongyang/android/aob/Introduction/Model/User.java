@@ -10,6 +10,8 @@ public class User {
     private String id;
     @SerializedName("pw")
     private String pw;
+    @SerializedName("image")
+    private int image;
     @SerializedName("name")
     private String name;
     @SerializedName("number")
@@ -19,10 +21,11 @@ public class User {
     @SerializedName("sos")
     private String sos;
 
-    public User(boolean success, String id, String pw, String name, String number, String email, String sos) {
+    public User(boolean success, String id, String pw, int image, String name, String number, String email, String sos) {
         this.success = success;
         this.id = id;
         this.pw = pw;
+        this.image = image;
         this.name = name;
         this.number = number;
         this.email = email;
@@ -51,6 +54,14 @@ public class User {
 
     public void setPw(String pw) {
         this.pw = pw;
+    }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
     }
 
     public String getName() {

@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,11 +17,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
 import com.dongyang.android.aob.Introduction.Service.IntroService;
+import com.dongyang.android.aob.Introduction.UserProfileDialog;
 import com.dongyang.android.aob.LoadingDialog;
 import com.dongyang.android.aob.R;
 
@@ -49,6 +53,10 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean idLengthCheck = false;
     private boolean pwLengthCheck = false;
     private LoadingDialog loadingDialog;
+    private CardView userCardView;
+    private ImageView userProfile;
+    private Dialog userProfileDialog;
+    private int userImage = 1;
 
 
     @Override
@@ -63,6 +71,23 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+
+
+
+        userCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userProfileDialog = new UserProfileDialog(RegisterActivity.this, new UserProfileDialog.Select() {
+                    @Override
+                    public void clickProfile(int userImg) {
+                        userImage = userImg;
+                    }
+                }, userProfile);
+                userProfileDialog.show();
+            }
+        });
+
+
 
         // 아이디 중복 확인 버튼을 눌렀을 때
         register_id_validate.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +158,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Log.d(TAG,"userImage : " + userImage);
+
 
                 // 값을 모두 받아온다
                 String id = register_id.getText().toString();
@@ -165,7 +192,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         IntroService introAPI = retrofit.create(IntroService.class);
 
-                        introAPI.signUp(id, pw, name, number, email, sos).enqueue(new Callback<CheckSuccess>() {
+                        introAPI.signUp(id, pw, userImage, name, number, email, sos).enqueue(new Callback<CheckSuccess>() {
                             @Override
                             public void onResponse(Call<CheckSuccess> call, Response<CheckSuccess> response) {
                                 loadingDialog.dismiss();
@@ -229,6 +256,8 @@ public class RegisterActivity extends AppCompatActivity {
         register_validate_check = findViewById(R.id.register_validate_check);
         register_id_length_check = findViewById(R.id.register_id_length_check);
         register_pw_length_check = findViewById(R.id.register_pw_length_check);
+        userCardView = findViewById(R.id.register_user_cardView);
+        userProfile = findViewById(R.id.register_user_profile);
         loadingDialog = new LoadingDialog(this);
 
         register_name.setFilters(new InputFilter[]{textSetFilter("kor")}); // 한글만 나오게 설정

@@ -68,6 +68,16 @@
                 android:textColor="@color/black"
                 android:textSize="25sp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/nanum_square"
+                android:gravity="center"
+                android:text="프로필 사진을 눌러 내 정보를 변경할 수 있어요."
+                android:textColor="@color/gray"
+                android:textSize="12sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -241,19 +251,6 @@
                 android:fontFamily="@font/nanum_barun_gothic"
                 android:layout_gravity="center"
                 android:text="기록이 존재하지 않아요. 기록을 등록해보세요!"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-
-            <Button
-                android:id="@+id/info_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="40dp"
-                android:background="@color/transparent"
-                android:fontFamily="@font/nanum_square"
-                android:text="임시 로그아웃"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
         </LinearLayout>

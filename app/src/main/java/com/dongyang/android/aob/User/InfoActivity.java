@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.dongyang.android.aob.Introduction.Activity.LoginActivity;
 import com.dongyang.android.aob.LoadingDialog;
+import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Map.Model.Measurement.Measure;
 import com.dongyang.android.aob.Map.Service.MeasureService;
@@ -55,6 +56,7 @@ public class InfoActivity extends AppCompatActivity {
     private ImageView user_profile;
     private CardView user_cardView;
     private String userName, userId;
+    private int userImg;
     private Button logout;
     private SharedPreferences pref;
     private ImageView mapImage;
@@ -79,10 +81,11 @@ public class InfoActivity extends AppCompatActivity {
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         userName = pref.getString("name", "김이엘").toString();
         userId = pref.getString("id", "").toString();
+        userImg = pref.getInt("image",1);
 
         // userId = "hoya";
 
-        logout = findViewById(R.id.info_logout);
+
         toolbar = findViewById(R.id.info_toolbar);
         m_recyclerView = findViewById(R.id.info_recyclerView);
         tv_sum_dist = findViewById(R.id.info_sum_dist);
@@ -91,6 +94,8 @@ public class InfoActivity extends AppCompatActivity {
         tv_sum_time = findViewById(R.id.info_sum_time);
         tv_user_name = findViewById(R.id.info_user_name);
         tv_measure_check = findViewById(R.id.info_no_measure);
+        user_profile = findViewById(R.id.info_user_profile);
+        user_cardView = findViewById(R.id.info_user_cardView);
 
         m_recyclerView.setHasFixedSize(true);
         m_recyclerView.addItemDecoration(new DividerItemDecoration(InfoActivity.this, DividerItemDecoration.VERTICAL)); // 구분선 지정
@@ -103,6 +108,7 @@ public class InfoActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
         setText();
+        setUserImage(userImg);
 
         editor = pref.edit();
 
@@ -113,52 +119,15 @@ public class InfoActivity extends AppCompatActivity {
         }
 
 
-
-
-        logout.setOnClickListener(new View.OnClickListener() {
+        user_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logout();
+                Intent intent = new Intent(InfoActivity.this, UserChangeActivity.class);
+                startActivity(intent);
             }
         });
 
 
-
-        /*
-        user_cardView = findViewById(R.id.info_user_cardView);
-        user_profile = findViewById(R.id.info_user_profile);
-
-        // Load an image using Glide library
-        Glide.with(getApplicationContext())
-                .load(R.drawable.item_user_image)
-                .into(user_profile);
-         */
-
-
-    }
-
-    public void logout() {
-
-        //*(9/8 추가) 사진 초기화 코드
-        try {
-            File file = new File("/data/user/0/com.dongyang.android.aob/files/capture");
-            File[] flist = file.listFiles();
-            //Toast.makeText(getApplicationContext(),"파일 삭제",Toast.LENGTH_LONG).show();
-            for (int i = 0; i < flist.length; i++) {
-                String fname = flist[i].getName();
-                if (fname.equals("file" + ".jpg")) {
-                    flist[i].delete();
-                }
-            }
-        } catch (Exception e) {
-            // Toast.makeText(getApplicationContext(), "실패", Toast.LENGTH_LONG).show();
-        }
-
-        editor.clear();
-        editor.commit();
-        Intent intent = new Intent(InfoActivity.this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // 상위 액티비티 모두 종료
-        startActivity(intent);
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -272,5 +241,35 @@ public class InfoActivity extends AppCompatActivity {
         tv_sum_time.setVisibility(View.VISIBLE);
         tv_sum_count.setVisibility(View.VISIBLE);
         tv_sum_kcal.setVisibility(View.VISIBLE);
+    }
+
+
+
+    // 09/26 유저 이미지 동적 변경
+    public void setUserImage(int userImg) {
+
+        switch(userImg) {
+            case 1 :
+                user_profile.setImageResource(R.drawable.ic_profile_female_green);
+                break;
+            case 2:
+                user_profile.setImageResource(R.drawable.ic_profile_male_green);
+                break;
+            case 3:
+                user_profile.setImageResource(R.drawable.ic_profile_female_blue);
+                break;
+            case 4:
+                user_profile.setImageResource(R.drawable.ic_profile_male_blue);
+                break;
+            case 5:
+                user_profile.setImageResource(R.drawable.ic_profile_female_purple);
+                break;
+            case 6:
+                user_profile.setImageResource(R.drawable.ic_profile_male_purple);
+                break;
+            default:
+                user_profile.setImageResource(R.drawable.ic_profile_female_green);
+                break;
+        }
     }
 }

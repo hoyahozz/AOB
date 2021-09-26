@@ -98,10 +98,12 @@ public class MeasurementDialog extends Dialog {
                 MeasureService retrofitAPI = retrofit.create(MeasureService.class);
 
                 // 데이터베이스 저장
-                retrofitAPI.insertMeasure(userId, mapImage_String, timer, s_time, f_time, avg_speed, sum_dist, 10.00).enqueue(new Callback<CheckSuccess>() {
+                retrofitAPI.insertMeasure(userId, mapImage_String, timer, s_time, f_time, avg_speed, sum_dist, kcal).enqueue(new Callback<CheckSuccess>() {
                     @Override
                     public void onResponse(Call<CheckSuccess> call, retrofit2.Response<CheckSuccess> response) {
-                        if (response.isSuccessful()) {
+
+                        Log.d("Measurement", "test :" + userId + " " + timer + " " +s_time + " " +f_time + " " +avg_speed + " " +sum_dist);
+                        if (response.isSuccessful() && response.body() != null) {
                             Log.d("Measurement", "Response");
                             loadingDialog.dismiss();
                             dismiss();

@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences pref;
     private String userName, userId;
+    private int userImg;
     private Bundle bundle;
     private CardView userInfo;
     private int value; // (0이면 메인으로 초기화면, 1이면 맵으로 초기화면 지정)
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         main_bnv = findViewById(R.id.main_bnv);
         userInfo = findViewById(R.id.main_user_info);
+        userImage = findViewById(R.id.main_user_image);
 
         userInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
         userName = pref.getString("name", "김이엘").toString();
         userId = pref.getString("id", "").toString();
+        userImg = pref.getInt("image",1);
+
+        setUserImage(userImg);
 
         Log.d("login", userName);
 
@@ -352,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onBackPressed() {
         // super.onBackPressed();
@@ -373,4 +377,33 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    // 09/26 유저 이미지 동적 변경
+    public void setUserImage(int userImg) {
+
+        switch(userImg) {
+            case 1 :
+                userImage.setImageResource(R.drawable.ic_profile_female_green);
+                break;
+            case 2:
+                userImage.setImageResource(R.drawable.ic_profile_male_green);
+                break;
+            case 3:
+                userImage.setImageResource(R.drawable.ic_profile_female_blue);
+                break;
+            case 4:
+                userImage.setImageResource(R.drawable.ic_profile_male_blue);
+                break;
+            case 5:
+                userImage.setImageResource(R.drawable.ic_profile_female_purple);
+                break;
+            case 6:
+                userImage.setImageResource(R.drawable.ic_profile_male_purple);
+                break;
+            default:
+                userImage.setImageResource(R.drawable.ic_profile_female_green);
+                break;
+        }
+    }
+
 }

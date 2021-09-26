@@ -13,33 +13,7 @@ import retrofit2.http.Query;
 
 public interface IntroService {
 
-    // String INTRO_URL = "http://192.168.0.4";
     String INTRO_URL = BuildConfig.SERVER; // 라즈베리파이 서버
-
-
-    // 로컬호스트
-//    @FormUrlEncoded
-//    @POST("/boda/intro/register.php")
-//    Call<CheckSuccess> signUp(
-//            @Field("id") String id,
-//            @Field("pw") String pw,
-//            @Field("name") String name,
-//            @Field("number") String number,
-//            @Field("email") String email,
-//            @Field("sos") String sos
-//    );
-//
-//    @GET("/boda/intro/login.php")
-//    Call<User> login(
-//            @Query("id") String id,
-//            @Query("pw") String pw
-//    );
-//
-//    @GET("/boda/intro/idValidate.php")
-//    Call<CheckSuccess> idValidate(
-//            @Query("id") String id
-//    );
-
 
     // 라즈베리파이 서버
     @FormUrlEncoded
@@ -47,6 +21,7 @@ public interface IntroService {
     Call<CheckSuccess> signUp(
             @Field("id") String id,
             @Field("pw") String pw,
+            @Field("image") int image,
             @Field("name") String name,
             @Field("number") String number,
             @Field("email") String email,

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".User.UserChangeActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/edit_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/green">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/nanum_square_eb"
+            android:text="내 정보 수정"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/edit_user_cardView"
+            android:layout_width="153dp"
+            android:layout_height="153dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="75dp">
+
+            <ImageView
+                android:id="@+id/edit_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile_female_green" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/nanum_square"
+            android:text="클릭하면 이미지를 선택할 수 있어요."
+            android:textColor="@color/gray"
+            android:textSize="11sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="아이디"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/edit_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="hoya"
+            android:textColor="#C4F11C5E"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="이름"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:background="@color/gray" />
+
+
+        <EditText
+            android:id="@+id/edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:textColor="@color/darkgreen"
+            android:hint="이름을 입력해주세요."
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:inputType="text"
+            android:maxLength="15"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="이메일"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:background="@color/gray" />
+
+
+        <EditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:textColor="@color/darkgreen"
+            android:hint="이메일을 입력해주세요."
+            android:digits="@string/text_not_korean"
+            android:maxLength="30"
+            android:inputType="textEmailAddress"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="휴대폰번호"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:background="@color/gray" />
+
+
+        <EditText
+            android:id="@+id/edit_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/darkgreen"
+            android:hint="휴대폰번호를 입력해주세요."
+            android:digits="0123456789"
+            android:inputType="number"
+            android:maxLength="11"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="비상연락처"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:background="@color/gray" />
+
+
+
+        <EditText
+            android:id="@+id/edit_sos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:textColor="@color/darkgreen"
+            android:digits="0123456789"
+            android:inputType="number"
+            android:maxLength="11"
+            android:hint="비상연락처를 입력해주세요."
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/edit_check"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/nanum_square"
+        android:text="비어있는 항목이 있어요! 모두 입력해주세요."
+        android:textColor="#FF0000"
+        android:textSize="11sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/edit_update"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="7dp"
+        android:background="@drawable/style_rounded_postive_button"
+        android:fontFamily="@font/nanum_square_eb"
+        android:text="수정완료"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/edit_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="로그아웃"
+            android:fontFamily="@font/nanum_square"
+            android:textColor="@color/gray"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+
+        <Button
+            android:id="@+id/edit_quit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="탈퇴하기"
+            android:fontFamily="@font/nanum_square"
+            android:textColor="@color/gray"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

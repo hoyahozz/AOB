@@ -19,13 +19,13 @@ public interface MeasureService {
 
     String MEASURE_URL = BuildConfig.SERVER; // 라즈베리파이 서버
 
-    @GET("/android/userinfo/measure/measurement.php")
+    @GET("android/userinfo/measure/measurement.php")
     Call<List<Measure>> getMeasure(
             @Query("id") String id
     );
 
     @FormUrlEncoded
-    @POST("/android/userinfo/measure/measurement.php")
+    @POST("android/userinfo/measure/measurement.php")
     Call<CheckSuccess> insertMeasure(
             @Field("id") String id,
             @Field("image") String image,
@@ -37,7 +37,7 @@ public interface MeasureService {
             @Field("kcal") double kcal
     );
 
-    @DELETE("/android/userinfo/measure/measurement.php")
+    @DELETE("android/userinfo/measure/measurement.php")
     Call<CheckSuccess> deleteMeasure(
             @Query("mnum") int mnum,
             @Query("id") String id

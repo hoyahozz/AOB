@@ -720,23 +720,30 @@ public class MapFragment extends Fragment
                     calDistance = new CalDistance(bef_lat, bef_long, cur_lat, cur_long);
                     double dist = calDistance.getDistance();
                     dist = (int) (dist * 100) / 100.0;
+                    now_speed = (dist/timer);
+//                    now_speed = (dist / timer) * 3.6; // 현재 속도
+                    now_speed = Math.round(now_speed * 100) / 100.0;
                     Log.d("dist", String.valueOf(dist));
                     sum_dist += dist;
                     sum_dist = Math.round(sum_dist * 100) / 100.0;
                     Log.d("sum_dist", String.valueOf(sum_dist));
                     // 평균 속도 계산
-                    now_speed = (dist / timer) * 3.6; // 현재 속도
+
                     // connect("Now_speed " + String.valueOf(now_speed));
-                    double avg_speed2 = 0;
                     if (timer != 0) {
-                        avg_speed = (sum_dist / timer) * 3.6; // km/h 로 변환
+                        avg_speed = (sum_dist / timer);
+                        Log.d("avg_speed", String.valueOf(avg_speed));
+//                        avg_speed = (sum_dist / timer) * 3.6; // km/h 로 변환
                         avg_speed = Math.round(avg_speed * 100) / 100.0;
+                        avg_speed *= 1000;
+                        if(avg_speed < 0) {
+                            avg_speed = 0;
+                        }
+                        Log.d("avg_speed", String.valueOf(avg_speed));
                         // avg_speed = (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
                     } else {
                         avg_speed = 0;
                     }
-
-                    Log.d("avg_speed2", String.valueOf(avg_speed2));
                     bef_lat = cur_lat;
                     bef_long = cur_long;
 
@@ -1418,8 +1425,8 @@ public class MapFragment extends Fragment
         // String measure_data = kcal + " " + sum_dist + " " + avg_speed + " " + timer; // 파이썬 소켓통신으로 보낼 데이터
         // connect("Measure " + String.valueOf(measure_data));
 
-        int timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
-        double kcal = MeasureCalorie(timer, avg_speed);
+        int g_timer = (int) timer / 1000;
+        double kcal = MeasureCalorie(g_timer, avg_speed);
 
         Log.d("최종 라이딩 정보", "칼로리 : " + String.valueOf(kcal));
 
@@ -1431,7 +1438,7 @@ public class MapFragment extends Fragment
                     @Override
                     public void onMapLoaded() {
                         loadingDialog.dismiss(); //
-                        measurementDialog = new MeasurementDialog(getActivity(), map_bitmap, userId, timer, s_time, f_time, avg_speed, sum_dist, kcal);
+                        measurementDialog = new MeasurementDialog(getActivity(), map_bitmap, userId, g_timer, s_time, f_time, avg_speed, sum_dist, kcal);
                         measurementDialog.show();
 
                         // 초기화

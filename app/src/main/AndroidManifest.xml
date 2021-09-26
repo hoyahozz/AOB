@@ -19,24 +19,27 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <!-- 자가 수리 -->
     <!-- Camera 기능 및 내/외부 저장소에 저장 할 수 있도록 권한설정 -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- 문자전송 -->
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <!-- 후방 스트리밍 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 문자전송 -->
+    <uses-permission android:name="android.permission.SEND_SMS" /> <!-- 후방 스트리밍 -->
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera2" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
-    <!-- MultidexAppication -> AgApplication cast 문제로 application 안에 android:name을 AGApplication으로 지정! -->
+    <!--
+ Android 11(API 수준30) 이상에서 필터링 되는걸 표시하려고 넣음
+        https://developer.android.com/training/package-visibility/declaring
+    -->
+    <queries>
+        <intent>
+            <action android:name="com.google.android.youtube.api.service.START" />
+        </intent>
+    </queries>
 
     <application
-        android:name="com.dongyang.android.aob.VoiceChat.AGApplication"
+        android:name=".VoiceChat.AGApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -48,11 +51,17 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false"/>
+        <activity android:name=".User.UserChangeActivity"></activity>
         <activity android:name=".User.InfoActivity" />
         <activity android:name=".Safety.SafeActivity" />
         <activity android:name=".User.FavoriteActivity" />
         <activity android:name=".Repair.YoutubeActivity" />
-        <activity android:name=".Repair.YoutubePlayerActivity"/>
+        <activity android:name=".Repair.YoutubePlayerActivity" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${GOOGLE_API_KEY}" />
@@ -63,8 +72,8 @@
         <activity android:name=".Introduction.Activity.FindActivity" />
         <activity android:name=".Introduction.Activity.RegisterActivity" />
         <activity android:name=".Introduction.Activity.LoginActivity" />
-        <activity android:name=".VoiceChat.ChatActivity"/>
-        <activity android:name=".VoiceChat.ChatStartActivity"/>
+        <activity android:name=".VoiceChat.ChatActivity" />
+        <activity android:name=".VoiceChat.ChatStartActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -92,16 +101,7 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <service
-            android:name=".Safety.tcp"/>
-
+        <service android:name=".Safety.tcp" />
     </application>
 
-    <!-- Android 11(API 수준30) 이상에서 필터링 되는걸 표시하려고 넣음
-        https://developer.android.com/training/package-visibility/declaring-->
-    <queries>
-        <intent>
-            <action android:name="com.google.android.youtube.api.service.START" />
-        </intent>
-    </queries>
 </manifest>
