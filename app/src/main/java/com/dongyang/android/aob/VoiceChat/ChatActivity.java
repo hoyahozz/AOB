@@ -84,9 +84,9 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         optional();
 
-        LinearLayout bottomContainer = (LinearLayout) findViewById(R.id.bottom_container);
-        FrameLayout.MarginLayoutParams fmp = (FrameLayout.MarginLayoutParams) bottomContainer.getLayoutParams();
-        fmp.bottomMargin = virtualKeyHeight() + 16;
+        //LinearLayout bottomContainer = (LinearLayout) findViewById(R.id.bottom_container);
+        //FrameLayout.MarginLayoutParams fmp = (FrameLayout.MarginLayoutParams) bottomContainer.getLayoutParams();
+        //fmp.bottomMargin = virtualKeyHeight() + 16;
     }
 
     private Handler mMainHandler;
@@ -135,7 +135,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                         }
                     };
 
-                    mMessageList = (EditText) findViewById(R.id.msg_list);
+                    //mMessageList = (EditText) findViewById(R.id.msg_list);
                 }
 
                 mMainHandler.removeMessages(UPDATE_UI_MESSAGE);
@@ -230,7 +230,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         ImageView iv = (ImageView) view;
 
         if (mAudioMuted) {
-            iv.setColorFilter(getResources().getColor(R.color.darkgreen), PorterDuff.Mode.MULTIPLY);
+            iv.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.MULTIPLY);
         } else {
             iv.clearColorFilter();
         }
@@ -366,7 +366,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         ImageView iv = (ImageView) findViewById(R.id.switch_speaker_id);
         if (mAudioRouting == 3) { // Speakerphone
-            iv.setColorFilter(getResources().getColor(R.color.darkgreen), PorterDuff.Mode.MULTIPLY);
+            iv.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.MULTIPLY);
         } else {
             iv.clearColorFilter();
         }

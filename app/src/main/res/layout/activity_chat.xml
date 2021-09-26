@@ -1,90 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".VoiceChat.ChatActivity"
-             android:keepScreenOn="true">
-    <RelativeLayout
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VoiceChat.ChatActivity"
+    android:orientation="vertical"
+    android:keepScreenOn="true">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chat_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="60dp"
+        android:layout_weight="0"
+        android:layout_marginBottom="10dp"
+        android:background="@color/green">
 
         <TextView
-            android:id="@+id/channel_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="6dp"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="@color/dark_black" />
+            android:fontFamily="@font/malgunbd"
+            android:id="@+id/channel_name"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
 
-        <com.dongyang.android.aob.VoiceChat.ui.AGLinearLayout
-            android:id="@+id/bottom_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true">
+    </androidx.appcompat.widget.Toolbar>
 
-            <ImageView
-                android:id="@+id/bottom_action_end_call"
-                android:layout_width="54dp"
-                android:layout_height="54dp"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="center"
-                android:src="@drawable/btn_endcall"
-                android:onClick="onEndCallClicked" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_centerHorizontal="true">
 
-            <RelativeLayout
-                android:id="@+id/bottom_action_container"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+    </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_centerInParent="true">
+    <View
+        android:layout_width="wrap_content"
+        android:background="@color/gray"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="5dp"/>
 
-                    <ImageView
-                        android:id="@+id/switch_speaker_id"
-                        android:layout_width="54dp"
-                        android:layout_height="match_parent"
-                        android:onClick="onSwitchSpeakerClicked"
-                        android:scaleType="center"
-                        android:src="@drawable/btn_speaker" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0"
+        android:gravity="center">
 
-                    <ImageView
-                        android:layout_width="54dp"
-                        android:layout_height="match_parent"
-                        android:scaleType="center"
-                        android:src="@drawable/btn_mute"
-                        android:onClick="onVoiceMuteClicked" />
 
-                </LinearLayout>
 
-            </RelativeLayout>
-        </com.dongyang.android.aob.VoiceChat.ui.AGLinearLayout>
+        <ImageView
+            android:id="@+id/bottom_action_end_call"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="25dp"
+            android:gravity="center"
+            android:onClick="onEndCallClicked"
+            android:scaleType="fitCenter"
+            android:src="@drawable/btn_endcall" />
 
-        <EditText
-            android:id="@+id/msg_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start|top"
-            android:enabled="true"
-            android:focusable="false"
-            android:scrollbars="vertical"
-            android:inputType="none"
-            android:layout_above="@id/bottom_container"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="8dp"
-            android:layout_below="@id/channel_name" />
+        <ImageView
+            android:id="@+id/switch_speaker_id"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="25dp"
+            android:onClick="onSwitchSpeakerClicked"
+            android:scaleType="fitCenter"
+            android:src="@drawable/btn_speaker" />
 
-    </RelativeLayout>
-</FrameLayout>
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="25dp"
+            android:gravity="center"
+            android:onClick="onVoiceMuteClicked"
+            android:scaleType="fitCenter"
+            android:src="@drawable/btn_mute" />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

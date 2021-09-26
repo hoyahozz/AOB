@@ -10,14 +10,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.VoiceChat.Model.ConstantApp;
 
 public class ChatStartActivity extends BaseActivity {
+
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice_chat); //레이아웃 설정
+
+        toolbar = findViewById(R.id.voice_toolbar);
+
+        // 툴바 생성
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+
     }
 
 
@@ -58,8 +73,15 @@ public class ChatStartActivity extends BaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // 메뉴별로 역할 지정
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: // 뒤로가기 버튼 눌렀을 때 종료
+                finish();
+                return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

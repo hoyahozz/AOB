@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,12 +8,19 @@
     android:gravity="center"
     tools:context=".VoiceChat.VoiceChatFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/logo_aob" />
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="60dp"
-        android:fontFamily="@font/nanum_barun_gothic_light"
-        android:text="서버 접속중..."/>
+        android:textSize="25sp"
+        android:fontFamily="@font/malgunbd"
+        android:text="서버 접속중"/>
 
 </LinearLayout>
