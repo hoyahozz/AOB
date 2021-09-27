@@ -59,7 +59,7 @@ public class InfoMeasurementDialog extends Dialog {
         tv_date.setText(tv_s_time);
         tv_dist.setText(String.valueOf(sum_dist) + " km");
         tv_speed.setText(String.valueOf(avg_speed) + " km/h");
-        tv_time.setText(String.valueOf(timer) + " 초");
+        tv_time.setText(String.valueOf(timer) + " 분");
         tv_kcal.setText(String.valueOf(kcal) + " kcal");
 
 

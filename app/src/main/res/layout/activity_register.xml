@@ -266,7 +266,7 @@
                 android:paddingLeft="17dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:maxLength="30"
+                android:maxLength="35"
                 android:textSize="15sp" />
 
             <TextView

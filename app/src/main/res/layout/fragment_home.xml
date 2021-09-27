@@ -7,89 +7,184 @@
     android:orientation="vertical"
     tools:context=".Main.HomeFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/home_user_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:orientation="vertical">
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="김이엘 님!"
+        android:textColor="@color/black"
+        android:textSize="35sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="오늘도 즐겁게 라이딩해볼까요?"
+        android:textColor="@color/gray"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="현재 위치"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/home_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="서울 강서구"
+        android:textColor="@color/gray"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_location_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_weather_gps" />
+
+    <ImageView
+        android:id="@+id/home_weatherImage"
+        android:layout_gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/ic_weather_sunny"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
         <TextView
-            android:id="@+id/home_user_name"
+            android:id="@+id/home_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="30dp"
+            android:layout_gravity="center"
             android:fontFamily="@font/nanum_barun_gothic"
-            android:text="김이엘 님!"
-            android:textColor="@color/black"
-            android:textSize="35sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/nanum_barun_gothic"
-            android:text="오늘도 즐겁게 라이딩해볼까요?"
+            android:text="기온"
             android:textColor="@color/gray"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text="°C"
+            android:textColor="@color/gray"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
         <ImageView
-            android:layout_width="300dp"
-            android:layout_height="0dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center"
-            android:layout_marginTop="35dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_weather_sunny" />
+            android:src="@drawable/ic_weather_umbrella"/>
+
+        <TextView
+            android:id="@+id/home_rain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text="22"
+            android:textColor="@color/gray"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text=" %"
+            android:textColor="@color/gray"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:layout_gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:fontFamily="@font/nanum_barun_gothic"
-                android:text="오늘의 날씨는 맑음 이에요!"
+                android:text="오늘의 날씨는 "
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/home_weatherText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_barun_gothic"
+                android:text="맑음"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
                 android:fontFamily="@font/nanum_barun_gothic"
-                android:text="걱정없이 달려도 되겠어요!"
-                android:textColor="@color/gray"
-                android:textSize="15sp" />
-        </LinearLayout>
-    </LinearLayout>
+                android:text=" 입니다!"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:orientation="vertical">
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/home_weatherTextEx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text="걱정없이 달려도 되겠어요!"
+            android:textColor="@color/gray"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/home_measurement"
             android:layout_width="350dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="35dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/style_rounded_postive_button"
             android:fontFamily="@font/nanum_square_eb"
             android:text="라이딩 하러가기"
@@ -97,6 +192,5 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
 
 </LinearLayout>

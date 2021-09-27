@@ -174,7 +174,7 @@
             android:textColor="@color/darkgreen"
             android:hint="이메일을 입력해주세요."
             android:digits="@string/text_not_korean"
-            android:maxLength="30"
+            android:maxLength="35"
             android:inputType="textEmailAddress"
             android:fontFamily="@font/nanum_barun_gothic"
             android:textSize="15sp"/>

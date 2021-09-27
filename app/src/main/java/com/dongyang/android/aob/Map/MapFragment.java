@@ -85,6 +85,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -131,6 +132,7 @@ public class MapFragment extends Fragment
     private Marker ridingStartMarker = null;
     private Marker ridingPauseMarker = null;
     private Marker ridingEndMarker = null;
+    private Polyline polyline;
     private ClusterManager<BikeItem> mClusterManager; // 클러스터 매니저, 커스텀 마커
 
     private static final String TAG = "MapFragment";
@@ -719,8 +721,8 @@ public class MapFragment extends Fragment
 
                     calDistance = new CalDistance(bef_lat, bef_long, cur_lat, cur_long);
                     double dist = calDistance.getDistance();
-                    dist = (int) (dist * 100) / 100.0;
-                    now_speed = (dist/timer);
+                    dist = Math.round(dist * 100) / 100.0;
+                    now_speed = (dist / timer);
 //                    now_speed = (dist / timer) * 3.6; // 현재 속도
                     now_speed = Math.round(now_speed * 100) / 100.0;
                     Log.d("dist", String.valueOf(dist));
@@ -736,7 +738,7 @@ public class MapFragment extends Fragment
 //                        avg_speed = (sum_dist / timer) * 3.6; // km/h 로 변환
                         avg_speed = Math.round(avg_speed * 100) / 100.0;
                         avg_speed *= 1000;
-                        if(avg_speed < 0) {
+                        if (avg_speed < 0) {
                             avg_speed = 0;
                         }
                         Log.d("avg_speed", String.valueOf(avg_speed));
@@ -750,7 +752,7 @@ public class MapFragment extends Fragment
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); // 현재 좌표 지정
                     mMap.moveCamera(cameraUpdate); // 현재 좌표로 이동
                     // 폴리라인 생성
-                    mMap.addPolyline(new PolylineOptions().color(0xFF6BC77C).width(30.0f).geodesic(true).add(cur_latLng).add(bef_latLng));
+                    polyline = mMap.addPolyline(new PolylineOptions().color(0xFF6BC77C).width(30.0f).geodesic(true).add(cur_latLng).add(bef_latLng));
                     bef_latLng = cur_latLng;
 
 
@@ -1544,6 +1546,9 @@ public class MapFragment extends Fragment
                     }
                     if (ridingStartMarker != null) {
                         ridingStartMarker.remove();
+                    }
+                    if (polyline != null) {
+                        polyline.remove();
                     }
                 }
             }
