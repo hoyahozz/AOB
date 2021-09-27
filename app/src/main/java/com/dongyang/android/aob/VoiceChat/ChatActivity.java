@@ -84,11 +84,11 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         optional();
 
-        //LinearLayout bottomContainer = (LinearLayout) findViewById(R.id.bottom_container);
-        //FrameLayout.MarginLayoutParams fmp = (FrameLayout.MarginLayoutParams) bottomContainer.getLayoutParams();
-        //fmp.bottomMargin = virtualKeyHeight() + 16;
+        LinearLayout bottomContainer = (LinearLayout) findViewById(R.id.bottom_container);
+        FrameLayout.MarginLayoutParams fmp = (FrameLayout.MarginLayoutParams) bottomContainer.getLayoutParams();
+        fmp.bottomMargin = virtualKeyHeight() + 16;
     }
-
+    /*
     private Handler mMainHandler;
 
     private static final int UPDATE_UI_MESSAGE = 0x1024;
@@ -135,7 +135,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                         }
                     };
 
-                    //mMessageList = (EditText) findViewById(R.id.msg_list);
+                    mMessageList = (EditText) findViewById(R.id.msg_list);
                 }
 
                 mMainHandler.removeMessages(UPDATE_UI_MESSAGE);
@@ -146,7 +146,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
             }
         });
     }
-
+*/
     private void optional() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -230,7 +230,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         ImageView iv = (ImageView) view;
 
         if (mAudioMuted) {
-            iv.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.MULTIPLY);
+            iv.setColorFilter(getResources().getColor(R.color.darkgreen), PorterDuff.Mode.MULTIPLY);
         } else {
             iv.clearColorFilter();
         }
@@ -241,7 +241,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         String msg = "onJoinChannelSuccess " + channel + " " + (uid & 0xFFFFFFFFL) + " " + elapsed;
         log.debug(msg);
 
-        notifyMessageChanged(msg);
+        //notifyMessageChanged(msg);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -260,7 +260,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         String msg = "onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason;
         log.debug(msg);
 
-        notifyMessageChanged(msg);
+        //notifyMessageChanged(msg);
 
     }
 
@@ -288,7 +288,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 peerUid = (Integer) data[0];
                 muted = (boolean) data[1];
 
-                notifyMessageChanged("mute: " + (peerUid & 0xFFFFFFFFL) + " " + muted);
+                //notifyMessageChanged("mute: " + (peerUid & 0xFFFFFFFFL) + " " + muted);
                 break;
             }
 
@@ -298,7 +298,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 short delay = (short) data[2];
                 short lost = (short) data[3];
 
-                notifyMessageChanged("quality: " + (peerUid & 0xFFFFFFFFL) + " " + quality + " " + delay + " " + lost);
+                //notifyMessageChanged("quality: " + (peerUid & 0xFFFFFFFFL) + " " + quality + " " + delay + " " + lost);
                 break;
             }
 
@@ -323,7 +323,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
                 if (volumeCache.length() > 0) {
                     String volumeMsg = volumeCache.substring(0, volumeCache.length() - 1);
-                    notifyMessageChanged(volumeMsg);
+                    //  notifyMessageChanged(volumeMsg);
 
                     if ((System.currentTimeMillis() / 1000) % 10 == 0) {
                         log.debug(volumeMsg);
@@ -346,7 +346,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 int error = (int) data[0];
                 String description = (String) data[1];
 
-                notifyMessageChanged(error + " " + description);
+                //   notifyMessageChanged(error + " " + description);
 
                 break;
             }
@@ -366,7 +366,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         ImageView iv = (ImageView) findViewById(R.id.switch_speaker_id);
         if (mAudioRouting == 3) { // Speakerphone
-            iv.setColorFilter(getResources().getColor(R.color.gray), PorterDuff.Mode.MULTIPLY);
+            iv.setColorFilter(getResources().getColor(R.color.darkgreen), PorterDuff.Mode.MULTIPLY);
         } else {
             iv.clearColorFilter();
         }

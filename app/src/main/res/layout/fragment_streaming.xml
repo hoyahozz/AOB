@@ -4,12 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+
     tools:context=".Safety.StreamingFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2.2"
+        android:id="@+id/main_container"
         android:orientation="vertical">
 
         <WebView
@@ -26,7 +28,7 @@
         android:layout_weight="7.8">
 
         <Button
-            android:id="@+id/btnmain"
+            android:id="@+id/btn_capture"
             android:layout_width="350dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
@@ -36,7 +38,8 @@
             android:gravity="center"
             android:text="캡처하기"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="OnClick,UsingOnClickInXml" />
     </LinearLayout>
 
 </LinearLayout>

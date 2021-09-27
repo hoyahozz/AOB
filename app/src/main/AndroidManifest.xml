@@ -39,7 +39,8 @@
     </queries>
 
     <application
-        android:name=".VoiceChat.AGApplication"
+        android:name="com.dongyang.android.aob.VoiceChat.AGApplication"
+        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
