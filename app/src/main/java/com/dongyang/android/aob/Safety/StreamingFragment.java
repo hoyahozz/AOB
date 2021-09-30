@@ -2,10 +2,9 @@ package com.dongyang.android.aob.Safety;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
+import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -15,9 +14,12 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.util.Log;
 
+import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.R;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.io.File;
@@ -28,11 +30,11 @@ import java.util.Date;
 
 public class StreamingFragment extends Fragment {
     LinearLayout lin;
-    Button capture;
+    Button btnmain;
     WebView web;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -40,9 +42,25 @@ public class StreamingFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View streamingLayout = inflater.inflate(R.layout.fragment_streaming, container,false);
+
         lin =  (LinearLayout)streamingLayout.findViewById(R.id.main_container);
-        capture = streamingLayout.findViewById(R.id.btn_capture);
-        capture.setOnClickListener(new View.OnClickListener() {
+        btnmain = streamingLayout.findViewById(R.id.btnmain);
+        web = (WebView) streamingLayout.findViewById(R.id.webView);
+        web.setWebViewClient(new TCWebViewClient()); // TCWebViewClient 클래스를 생성하여 웹뷰에 대입
+
+        // WebSettings 클래스를 이용하여 줌 버튼 컨트롤이 화면에 보이게 함
+        WebSettings webSet = web.getSettings();
+        webSet.setBuiltInZoomControls(true);
+        web.getSettings().setLoadWithOverviewMode(true);
+        web.getSettings().setUseWideViewPort(true);
+        web.getSettings().setBuiltInZoomControls(true);
+        web.getSettings().setSupportZoom(true);
+        web.getSettings().setDisplayZoomControls(false);
+        web.loadUrl("http://192.168.35.80:5000/stream?src=0");
+
+
+
+        btnmain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
                 String folder = "AOB"; // 폴더 이름
@@ -82,20 +100,9 @@ public class StreamingFragment extends Fragment {
                 }
             }
         });
-        web = (WebView) streamingLayout.findViewById(R.id.webView);
-        web.setWebViewClient(new TCWebViewClient()); // TCWebViewClient 클래스를 생성하여 웹뷰에 대입
-
-        // WebSettings 클래스를 이용하여 줌 버튼 컨트롤이 화면에 보이게 함
-        WebSettings webSet = web.getSettings();
-        webSet.setBuiltInZoomControls(true);
-        web.getSettings().setLoadWithOverviewMode(true);
-        web.getSettings().setUseWideViewPort(true);
-        web.getSettings().setBuiltInZoomControls(true);
-        web.getSettings().setSupportZoom(true);
-        web.getSettings().setDisplayZoomControls(false);
-
         return streamingLayout;
     }
+
     // WebViewClient를 상속받아 자신의 WebViewClient인 TCWebViewClient 클래스를 정의
     class TCWebViewClient extends WebViewClient {
         @Override
@@ -104,3 +111,4 @@ public class StreamingFragment extends Fragment {
         }
     }
 }
+
