@@ -26,6 +26,7 @@ android {
         buildConfigField "String", "SERVER", properties['raspberry_server']
         buildConfigField "String", "SEOUL_API_KEY", properties['seoul_api_key']
         buildConfigField "String", "DEEP_RUNNING_SERVER", properties['deep_running_server']
+        buildConfigField "String", "WEAHTER_API_KEY", properties['weather_api_key']
     }
 
     buildTypes {

@@ -5,12 +5,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,7 +116,24 @@ public class UserChangeActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logout();
+
+                AlertDialog dial = new AlertDialog.Builder(UserChangeActivity.this).
+                        setMessage("로그아웃 하시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                logout();
+                            }
+                        }).setNegativeButton("취소", null).show();
+
+                TextView dialTv = dial.findViewById(android.R.id.message);
+                Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+                Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+                Typeface typeface = ResourcesCompat.getFont(UserChangeActivity.this, R.font.nanum_square);
+                dialTv.setTypeface(typeface);
+                dialBtn.setTypeface(typeface);
+                dialBtn2.setTypeface(typeface);
+                dialBtn2.setTextColor(Color.BLACK);
             }
         });
 
@@ -121,23 +141,25 @@ public class UserChangeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                dialog.setMessage("정말 탈퇴하시겠어요?");
+                AlertDialog dial = new AlertDialog.Builder(UserChangeActivity.this).
+                        setMessage("정말 탈퇴하시겠어요?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                loadingDialog.show();
+                                quit();
+                            }
+                        }).setNegativeButton("취소", null).show();
 
-                dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-                dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        loadingDialog.show();
-                        quit();
-                    }
-                });
-                dialog.show();
-
+                TextView dialTv = dial.findViewById(android.R.id.message);
+                Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+                Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+                Typeface typeface = ResourcesCompat.getFont(UserChangeActivity.this, R.font.nanum_square);
+                dialTv.setTypeface(typeface);
+                dialBtn.setTypeface(typeface);
+                dialBtn2.setTypeface(typeface);
+                dialBtn.setTextColor(Color.RED);
+                dialBtn2.setTextColor(Color.BLACK);
             }
         });
 
@@ -156,22 +178,25 @@ public class UserChangeActivity extends AppCompatActivity {
                 if (u_name.equals("") || u_email.equals("") || u_number.equals("") || u_sos.equals("")) {
                     tv_check.setVisibility(View.VISIBLE);
                 } else {
-                    dialog.setMessage("수정시 현재 측정중인 기록이 사라집니다. 수정하시겠습니까?");
 
-                    dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                    AlertDialog dial = new AlertDialog.Builder(UserChangeActivity.this).
+                            setMessage("수정시 현재 측정중인 기록이 사라집니다. 수정하시겠습니까?")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    loadingDialog.show();
+                                    update(u_name,u_number,u_email,u_sos);
+                                }
+                            }).setNegativeButton("취소", null).show();
 
-                        }
-                    });
-                    dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            loadingDialog.show();
-                            update(u_name,u_number,u_email,u_sos);
-                        }
-                    });
-                    dialog.show();
+                    TextView dialTv = dial.findViewById(android.R.id.message);
+                    Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+                    Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+                    Typeface typeface = ResourcesCompat.getFont(UserChangeActivity.this, R.font.nanum_square);
+                    dialTv.setTypeface(typeface);
+                    dialBtn.setTypeface(typeface);
+                    dialBtn2.setTypeface(typeface);
+                    dialBtn2.setTextColor(Color.BLACK);
                 }
             }
         });

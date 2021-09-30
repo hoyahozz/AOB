@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dongyang.android.aob.Introduction.Model.CheckSuccess;
@@ -64,25 +68,27 @@ public class FavoriteAdapter
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                dialog.setMessage("즐겨찾기를 삭제하시겠습니까?");
-                dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                AlertDialog dial = new AlertDialog.Builder(context).
+                        setMessage("즐겨찾기를 삭제하시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // 데이터베이스에서도 데이터 삭제, 리사이클러뷰에서 보여지는 아이템 삭제
+                                datas.remove(position);
+                                notifyItemRemoved(position);
+                                deleteFavorite(context, fnum);
+                                notifyItemRangeChanged(position, datas.size());
+                            }
+                        }).setNegativeButton("취소", null).show();
 
-                    }
-                });
-                dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // 데이터베이스에서도 데이터 삭제, 리사이클러뷰에서 보여지는 아이템 삭제
-                        datas.remove(position);
-                        notifyItemRemoved(position);
-                        deleteFavorite(context, fnum);
-                        notifyItemRangeChanged(position, datas.size());
-                    }
-                });
-                dialog.show();
+                TextView dialTv = dial.findViewById(android.R.id.message);
+                Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+                Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+                Typeface typeface = ResourcesCompat.getFont(context, R.font.nanum_square);
+                dialTv.setTypeface(typeface);
+                dialBtn.setTypeface(typeface);
+                dialBtn2.setTypeface(typeface);
+                dialBtn2.setTextColor(Color.BLACK);
             }
         });
     }

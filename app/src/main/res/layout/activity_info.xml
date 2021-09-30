@@ -79,12 +79,14 @@
                 android:textColor="@color/gray"
                 android:textSize="12sp" />
 
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:background="@color/gray" />
+                android:layout_marginTop="20dp"
+                android:background="#3E5A6A72" />
+
 
             <LinearLayout
 
@@ -95,7 +97,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:visibility="invisible"
                     android:id="@+id/info_sum_dist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -103,7 +104,8 @@
                     android:gravity="center"
                     android:text="1,2378 Km"
                     android:textColor="@color/black"
-                    android:textSize="32sp" />
+                    android:textSize="32sp"
+                    android:visibility="invisible" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -133,7 +135,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:visibility="invisible"
                         android:id="@+id/info_sum_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -141,7 +142,8 @@
                         android:fontFamily="@font/nanum_square"
                         android:text="20655 분"
                         android:textColor="@color/black"
-                        android:textSize="22sp" />
+                        android:textSize="22sp"
+                        android:visibility="invisible" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -161,7 +163,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:visibility="invisible"
                         android:id="@+id/info_sum_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -169,7 +170,8 @@
                         android:fontFamily="@font/nanum_square"
                         android:text="1500 회"
                         android:textColor="@color/black"
-                        android:textSize="22sp" />
+                        android:textSize="22sp"
+                        android:visibility="invisible" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -191,7 +193,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:visibility="invisible"
                         android:id="@+id/info_sum_kcal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -199,7 +200,8 @@
                         android:fontFamily="@font/nanum_square"
                         android:text="3,450 kcal"
                         android:textColor="@color/black"
-                        android:textSize="22sp" />
+                        android:textSize="22sp"
+                        android:visibility="invisible" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -221,38 +223,39 @@
                 android:layout_height="1dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:background="@color/gray" />
+                android:background="#3E5A6A72" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="25dp"
                 android:fontFamily="@font/nanum_barun_gothic"
                 android:gravity="center"
                 android:text="최근 기록"
                 android:textColor="@color/gray"
                 android:textSize="20sp" />
 
+
             <androidx.recyclerview.widget.RecyclerView
-                android:visibility="gone"
                 android:id="@+id/info_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="15dp"
+                android:visibility="gone" />
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/info_no_measure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="40dp"
                 android:fontFamily="@font/nanum_barun_gothic"
-                android:layout_gravity="center"
                 android:text="기록이 존재하지 않아요. 기록을 등록해보세요!"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

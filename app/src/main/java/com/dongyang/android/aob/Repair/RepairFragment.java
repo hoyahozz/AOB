@@ -270,7 +270,7 @@ public class RepairFragment extends Fragment {
                     Log.d(TAG, result.getResult());
 
                     // 결과값이 성공적으로 받아와졌으므로, 유튜브 액티비티로 이동한다.
-                    Toast.makeText(getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), "서버 연결 성공!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), YoutubeActivity.class);
                     intent.putExtra("result", result.getResult()); // 결과값에 따라 유튜브 검색값을 입력해야 하기 때문에, 유튜브 액티비티로 데이터를 전송한다.
                     Log.d("Register", result.getResult());

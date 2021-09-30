@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -180,7 +182,7 @@ public class MapFragment extends Fragment
 
     private ImageButton bikeMeasurement, bikeMyLocation, bikeRefresh;
     private ImageButton bike_measurement_start, bike_measurement_stop, bike_measurement_reset;
-    private AlertDialog.Builder dialog;
+    private AlertDialog dialog;
     private boolean bikeON = false;
     private int bFirst = 1; // 1이면 현재 위치가 있다는 뜻, 0이면 현재 위치가 없다는 뜻
 
@@ -305,7 +307,6 @@ public class MapFragment extends Fragment
     public void onMapReady(final GoogleMap googleMap) {
         Log.d(TAG, "onMapReady :");
 
-        dialog = new AlertDialog.Builder(this.getActivity());
 
         mMap = googleMap;
 
@@ -510,7 +511,8 @@ public class MapFragment extends Fragment
         if (bikeON == true) {
 
             if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                    hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                    hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                    checkLocationServicesStatus()) {
                 if (mCurrentLocation != null) { // 현재 위치가 있으면 바로 실행
                     ReadyMeasurement();
                 } else { // 현재 위치가 없으면 잡을 때까지 로딩
@@ -525,49 +527,55 @@ public class MapFragment extends Fragment
             @Override
             public void onClick(View v) {
                 if (bikeON == false) { // 측정 모드가 켜져있지 않을 때
-                    dialog.setMessage("측정 모드를 실행하시겠습니까?");
 
-                    dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                    AlertDialog dial = new AlertDialog.Builder(getActivity()).
+                            setMessage("측정 모드를 실행하시겠습니까?")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // 기존 맵에 남아있는 마커 지우는 작업 실시
+                                    mMap.clear();
+                                    mClusterManager.clearItems();
+                                    bikeBottomSheet.setVisibility(View.GONE);
+                                    seoulBike = 0;
+                                    seoulBike_controller.setTextColor(0xFF5a6a72);
 
-                        }
-                    });
-                    dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // 기존 맵에 남아있는 마커 지우는 작업 실시
-                            mMap.clear();
-                            mClusterManager.clearItems();
-                            bikeBottomSheet.setVisibility(View.GONE);
-                            seoulBike = 0;
-                            seoulBike_controller.setTextColor(0xFF5a6a72);
+                                    bikeON = true;
+                                    onMapReady(mMap);
+                                }
+                            }).setNegativeButton("취소", null).show();
 
-                            bikeON = true;
-                            onMapReady(mMap);
-                        }
-                    });
-                    dialog.show();
+                    TextView dialTv = dial.findViewById(android.R.id.message);
+                    Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+                    Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+                    Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.nanum_square);
+                    dialTv.setTypeface(typeface);
+                    dialBtn.setTypeface(typeface);
+                    dialBtn2.setTypeface(typeface);
+                    dialBtn2.setTextColor(Color.BLACK);
                 } else { // 측정 모드가 켜져있을 때
-                    dialog.setMessage("측정 모드를 종료하시겠습니까?");
+                    AlertDialog dial = new AlertDialog.Builder(getActivity()).
+                            setMessage("측정 모드를 종료하시겠습니까?")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // 기존 맵에 남아있는 마커 지우는 작업 실시
+                                    mMap.clear();
+                                    bikeON = false;
+                                    onMapReady(mMap);
+                                    bikeMeasurement.setImageResource(R.drawable.ic_riding_off);
+                                    bikeMeasurementBottomSheet.setVisibility(View.GONE);
+                                }
+                            }).setNegativeButton("취소", null).show();
+                    TextView dialTv = dial.findViewById(android.R.id.message);
+                    Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+                    Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+                    Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.nanum_square);
+                    dialTv.setTypeface(typeface);
+                    dialBtn.setTypeface(typeface);
+                    dialBtn2.setTextColor(Color.BLACK);
+                    dialBtn2.setTypeface(typeface);
 
-                    dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-                    dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mMap.clear();
-                            bikeON = false;
-                            onMapReady(mMap);
-                            bikeMeasurement.setImageResource(R.drawable.ic_riding_off);
-                            bikeMeasurementBottomSheet.setVisibility(View.GONE);
-                        }
-                    });
-                    dialog.show();
                 }
             }
         });
@@ -1170,27 +1178,35 @@ public class MapFragment extends Fragment
 
     //여기부터는 GPS 활성화를 위한 메소드들
     private void showDialogForLocationServiceSetting() {
+        AlertDialog dial = new AlertDialog.Builder(getActivity()).
+                setMessage("지도 서비스를 사용하기 위해서 위치 서비스가 필요해요! "
+                        + "위치 서비스 설정을 하시겠어요?")
+                .setCancelable(true)
+                .setPositiveButton("설정", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent callGPSSettingIntent
+                                = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        getActivity().startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
+                    }
+                }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
+                        fragmentManager.beginTransaction().remove(MapFragment.this).commit();
+                        main_bnv.getMenu().findItem(R.id.navigation_home).setChecked(true);
+                    }
+                }).show();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("위치 서비스 비활성화");
-        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
-                + "위치 설정을 수정하실래요?");
-        builder.setCancelable(true);
-        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Intent callGPSSettingIntent
-                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                getActivity().startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        builder.create().show();
+
+        TextView dialTv = dial.findViewById(android.R.id.message);
+        Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+        Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+        Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.nanum_square);
+        dialTv.setTypeface(typeface);
+        dialBtn.setTypeface(typeface);
+        dialBtn2.setTypeface(typeface);
+        dialBtn2.setTextColor(Color.BLACK);
     }
 
 
