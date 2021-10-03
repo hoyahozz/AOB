@@ -6,11 +6,33 @@
     android:orientation="vertical"
     tools:context=".Safety.StreamingFragment">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="안전하게 달려보세요!"
+        android:textColor="@color/black"
+        android:textSize="35sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/nanum_barun_gothic"
+        android:text="후방 모습도 확인하며 달려보세요!"
+        android:textColor="@color/gray"
+        android:textSize="16sp"/>
+
     <LinearLayout
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2.2"
-        android:id="@+id/main_container"
+        android:layout_weight="1"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <WebView
@@ -20,24 +42,18 @@
             android:clickable="true" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="7.8">
-
-        <Button
-            android:id="@+id/btnmain"
-            android:layout_width="350dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop= "60dp"
-            android:background="@drawable/style_rounded_postive_button"
-            android:fontFamily="@font/nanum_square_eb"
-            android:gravity="center"
-            android:text="캡처하기"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnmain"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/style_rounded_postive_button"
+        android:fontFamily="@font/nanum_square_eb"
+        android:gravity="center"
+        android:text="캡처하기"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
 </LinearLayout>

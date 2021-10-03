@@ -1,9 +1,14 @@
 package com.dongyang.android.aob.Main;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,16 +19,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import com.dongyang.android.aob.BuildConfig;
+import com.dongyang.android.aob.Map.MapFragment;
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Safety.GpsTracker;
 import com.dongyang.android.aob.Weather.Model.Items;
 import com.dongyang.android.aob.Weather.Model.WeatherAPI;
 import com.dongyang.android.aob.Weather.Service.WeatherService;
 import com.dongyang.android.aob.Weather.Weather;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -43,6 +55,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 
 public class HomeFragment extends Fragment {
 
@@ -51,6 +65,12 @@ public class HomeFragment extends Fragment {
     private TextView home_user_name;
     private Button home_measurement;
     String userName;
+
+    // permission
+    private int hasFineLocationPermission;
+    private int hasCoarseLocationPermission;
+    private FragmentManager fragmentManager;
+    private BottomNavigationView main_bnv;
 
     // weather
     // 위치 관련
@@ -65,13 +85,14 @@ public class HomeFragment extends Fragment {
     public static int TO_GPS = 1;
 
     // 기상청 api 관련
-    private String MY_KEY = "rsUhkN5/FhLY6KC2adYn9Cs35Bd8GVlQJ3UCUIyi8XS6UIwpqgqUrsI/fPNicSjsSVm7h37bGhYjIiazKzVFog==";
+    private String MY_KEY = BuildConfig.WEAHTER_API_KEY;
     private Integer PAGE_NO = 1;
     private Integer NUM_OF_ROWS = 33;
     private String TMP;
     private String SKY;
     private String PTY;
     private String POP;
+
 
     // 기상청 격자 좌표
     private int grid_x;
@@ -113,22 +134,28 @@ public class HomeFragment extends Fragment {
         home_weatherImage = homeLayout.findViewById(R.id.home_weatherImage);
         home_locationButton = homeLayout.findViewById(R.id.home_location_button);
 
-        int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
+        hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) { // 권한 부여가 완료됐을 때
-            gpsCheckTask();
-            weatherTask(grid_x, grid_y);
+
+        if (!checkLocationServicesStatus()) { // 위치 서비스 활성화 확인
+            showDialogForLocationServiceSetting();
         } else {
-            // 사용자가 위치를 거부를 한 적이 있는 경우에는
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])) {
-                Toast.makeText(getActivity(), "위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
-                //사용자게에 위치 요청
-                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+
+            if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                    hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) { // 권한 부여가 완료됐을 때
+                gpsCheckTask();
+                weatherTask(grid_x, grid_y);
             } else {
-                // 위치기능 끈 경우
-                ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                // 사용자가 위치를 거부를 한 적이 있는 경우에는
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])) {
+                    Toast.makeText(getActivity(), "위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
+                    //사용자게에 위치 요청
+                    ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                } else {
+                    // 위치기능 끈 경우
+                    ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                }
             }
         }
 
@@ -149,9 +176,41 @@ public class HomeFragment extends Fragment {
         home_locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                w_data.clear();
-                gpsCheckTask();
-                weatherTask(grid_x, grid_y);
+
+                if (!checkLocationServicesStatus()) { // 위치 서비스 활성화 확인
+                    showDialogForLocationServiceSetting();
+                } else {
+
+                    w_data.clear();
+                    // 위치 퍼미션 체크
+                    hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+                    hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+                    if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                            hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) { // 권한 부여가 완료됐을 때
+                        gpsCheckTask();
+                        weatherTask(grid_x, grid_y);
+                    } else {
+                        // 사용자가 위치를 거부를 한 적이 있는 경우
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])) {
+                            Snackbar.make(homeLayout, "날씨 기능을 사용하려면 접근 권한이 필요해요!", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                                }
+                            }).show();
+                            // 위치 요청을 거부한 적이 있는 경우
+                        } else {
+                            // 위치 요청을 거부한 적이 없는 경우
+                            Snackbar.make(homeLayout, "날씨 기능을 사용하려면 접근 권한이 필요해요!", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    ActivityCompat.requestPermissions(getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                                }
+                            }).show();
+                        }
+                    }
+                }
             }
         });
 
@@ -255,76 +314,83 @@ public class HomeFragment extends Fragment {
         retrofitAPI.getList(MY_KEY, PAGE_NO, NUM_OF_ROWS, "JSON", w_date, w_time, GRID_X, GRID_Y).enqueue(new Callback<WeatherAPI>() {
             @Override
             public void onResponse(Call<WeatherAPI> call, Response<WeatherAPI> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
                     WeatherAPI data = response.body();
 
-                    List<Items.Item> weatherList = data.getResponse().getBody().getItems().getItem();
+                    List<Items.Item> weatherList;
 
-                    for (int i = 0; i < 33; i++) {
-                        if (i_time == 3 * i) { // 0, 3, 6, 9, ..., 21
-                            for (int j = 0; j < 11; j++) {
-                                String category = weatherList.get(j).getCategory();
-                                switch (category) {
-                                    case "TMP": // 1시간 기온
-                                        TMP = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "SKY": // 하늘 상태
-                                        SKY = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "PTY": // 강수 형태
-                                        PTY = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "POP": // 강수 확률
-                                        POP = weatherList.get(j).getFcstValue();
-                                        break;
+                    if (data.getResponse().getBody().getItems().getItem() != null) {
+                        weatherList = data.getResponse().getBody().getItems().getItem();
+
+                        for (int i = 0; i < 33; i++) {
+                            if (i_time == 3 * i) { // 0, 3, 6, 9, ..., 21
+                                for (int j = 0; j < 11; j++) {
+                                    String category = weatherList.get(j).getCategory();
+                                    switch (category) {
+                                        case "TMP": // 1시간 기온
+                                            TMP = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "SKY": // 하늘 상태
+                                            SKY = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "PTY": // 강수 형태
+                                            PTY = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "POP": // 강수 확률
+                                            POP = weatherList.get(j).getFcstValue();
+                                            break;
+                                    }
+                                }
+                            } else if (i_time == 3 * i - 2) { // 1, 4, 7, 10, ..., 22
+                                for (int j = 11; j < 22; j++) {
+                                    String category = weatherList.get(j).getCategory();
+                                    switch (category) {
+                                        case "TMP":
+                                            TMP = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "SKY":
+                                            SKY = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "PTY":
+                                            PTY = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "POP":
+                                            POP = weatherList.get(j).getFcstValue();
+                                            break;
+                                    }
+                                }
+                            } else { // 2, 5, 8, ..., 23
+                                for (int j = 22; j < 33; j++) {
+                                    String category = weatherList.get(j).getCategory();
+                                    switch (category) {
+                                        case "TMP":
+                                            TMP = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "SKY":
+                                            SKY = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "PTY":
+                                            PTY = weatherList.get(j).getFcstValue();
+                                            break;
+                                        case "POP":
+                                            POP = weatherList.get(j).getFcstValue();
+                                            break;
+                                    }
                                 }
                             }
-                        } else if (i_time == 3 * i - 2) { // 1, 4, 7, 10, ..., 22
-                            for (int j = 11; j < 22; j++) {
-                                String category = weatherList.get(j).getCategory();
-                                switch (category) {
-                                    case "TMP":
-                                        TMP = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "SKY":
-                                        SKY = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "PTY":
-                                        PTY = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "POP":
-                                        POP = weatherList.get(j).getFcstValue();
-                                        break;
-                                }
-                            }
-                        } else { // 2, 5, 8, ..., 23
-                            for (int j = 22; j < 33; j++) {
-                                String category = weatherList.get(j).getCategory();
-                                switch (category) {
-                                    case "TMP":
-                                        TMP = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "SKY":
-                                        SKY = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "PTY":
-                                        PTY = weatherList.get(j).getFcstValue();
-                                        break;
-                                    case "POP":
-                                        POP = weatherList.get(j).getFcstValue();
-                                        break;
-                                }
-                            }
+                            w_data.add(new Weather(TMP, SKY, PTY, POP));
                         }
-                        w_data.add(new Weather(TMP, SKY, PTY, POP));
-                    }
-                    w_tmp = w_data.get(0).getTMP();
-                    w_sky = w_data.get(0).getSKY();
-                    w_pty = w_data.get(0).getPTY();
-                    w_pop = w_data.get(0).getPOP();
+                        w_tmp = w_data.get(0).getTMP();
+                        w_sky = w_data.get(0).getSKY();
+                        w_pty = w_data.get(0).getPTY();
+                        w_pop = w_data.get(0).getPOP();
 
-                    Log.d(">>", "tmp = " + w_tmp + ", sky = " + w_sky + ", pty = " + w_pty + ", pop = " + w_pop);
-                    weatherSet(w_tmp, w_sky, w_pty, w_pop, address);
+                        Log.d(">>", "tmp = " + w_tmp + ", sky = " + w_sky + ", pty = " + w_pty + ", pop = " + w_pop);
+                        weatherSet(w_tmp, w_sky, w_pty, w_pop, address);
+                    } else {
+                        Toast.makeText(getActivity(), "날씨를 불러오는 도중 오류가 발생하였습니다. 다시 실행해주세요!", Toast.LENGTH_LONG).show();
+                    }
+
                 } else {
                     Log.d("WEATHER", "Resoponse Fail.");
                 }
@@ -394,4 +460,46 @@ public class HomeFragment extends Fragment {
         }
         return getAddress;
     }
+
+
+    /*
+        10.03
+        홈 프래그먼트 위치 서비스 활성화 함수
+     */
+
+    public boolean checkLocationServicesStatus() { // 로케이션 매니저 설정 및 위치값 갱신 허가
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        // 로케이션 매니저 설정 및 선언
+
+        // 위치값 갱신 호출
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) // GPS로 호출하거나
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER); // 네트워크로 호출할 수 있음
+    }
+
+
+    private void showDialogForLocationServiceSetting() {
+        AlertDialog dial = new AlertDialog.Builder(getActivity()).
+                setMessage("날씨 서비스를 사용하기 위해서 위치 서비스가 필요해요! "
+                        + "위치 서비스 설정을 하시겠어요?")
+                .setCancelable(true)
+                .setPositiveButton("설정", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent callGPSSettingIntent
+                                = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        getActivity().startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
+                    }
+                }).setNegativeButton("취소", null).show();
+
+
+        TextView dialTv = dial.findViewById(android.R.id.message);
+        Button dialBtn = (Button) dial.getWindow().findViewById(android.R.id.button1);
+        Button dialBtn2 = (Button) dial.getWindow().findViewById(android.R.id.button2);
+        Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.nanum_square);
+        dialTv.setTypeface(typeface);
+        dialBtn.setTypeface(typeface);
+        dialBtn2.setTypeface(typeface);
+        dialBtn2.setTextColor(Color.BLACK);
+    }
+
 }

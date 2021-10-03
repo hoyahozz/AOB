@@ -215,9 +215,14 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     }
 
     private void quitCall() {
+
+        /*
+
+        10-03 액티비티 스택 관리로 인해 해당 영역 제외하였음.
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
 
+        */
         finish();
     }
 

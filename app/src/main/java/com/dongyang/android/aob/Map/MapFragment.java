@@ -123,8 +123,8 @@ public class MapFragment extends Fragment
 
     private LatLng SEOUL_LOCATION = new LatLng(37.56, 126.97);
 
-    FragmentManager fragmentManager;
-    BottomNavigationView main_bnv;
+    private FragmentManager fragmentManager;
+    private BottomNavigationView main_bnv;
 
     private MapView mapView = null;
     private GoogleMap mMap;
@@ -699,9 +699,6 @@ public class MapFragment extends Fragment
                 // connect("CurrentPosition " + String.valueOf(currentPosition));
 
 
-                //현재 위치에 마커 생성하고 이동
-                // setCurrentLocation(location, markerTitle, markerSnippet);
-
                 mCurrentLocation = location;
 
                 if (bFirst == 0) {
@@ -714,56 +711,68 @@ public class MapFragment extends Fragment
 
                     Log.d("Before", String.valueOf(bef_lat));
                     Log.d("Before", String.valueOf(bef_long));
-                    LatLng bef_latLng = new LatLng(bef_lat, bef_long);
-                    // 이전 위치 정보 저장
-                    timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
-                    Log.d("Timer", String.valueOf(timer));
+                    LatLng bef_latLng = new LatLng(bef_lat, bef_long); // 이전 위치 정보 저장
 
-                    // 현재 위치 정보 저장
-                    bike_distance.setText(sum_dist + " km");
-                    bike_avg_speed.setText(avg_speed + " km/h");
+
+                    timer = (int) (SystemClock.elapsedRealtime() - bike_timer.getBase()) / 1000;
+
                     cur_lat = location.getLatitude();
                     cur_long = location.getLongitude();
-                    LatLng cur_latLng = new LatLng(cur_lat, cur_long);
-
+                    LatLng cur_latLng = new LatLng(cur_lat, cur_long); // 현재 위치 정보 저장
 
                     calDistance = new CalDistance(bef_lat, bef_long, cur_lat, cur_long);
+
+                    /*
+                        속도 계산 과정
+
+                        dist의 단위는 현재 m
+                        속도를 우선 m/s 방식으로 구한 후, 3.6을 곱해 km/h 형태로 변환한다.
+                        이 후 dist / 1000.0 을 해줌으로서 km 단위로 변환시킨다.
+                     */
+
                     double dist = calDistance.getDistance();
-                    dist = Math.round(dist * 100) / 100.0;
-                    now_speed = (dist / timer);
-//                    now_speed = (dist / timer) * 3.6; // 현재 속도
+                    now_speed = (dist / timer) * 3.6;
                     now_speed = Math.round(now_speed * 100) / 100.0;
-                    Log.d("dist", String.valueOf(dist));
+
                     sum_dist += dist;
-                    sum_dist = Math.round(sum_dist * 100) / 100.0;
-                    Log.d("sum_dist", String.valueOf(sum_dist));
-                    // 평균 속도 계산
 
                     // connect("Now_speed " + String.valueOf(now_speed));
+
                     if (timer != 0) {
                         avg_speed = (sum_dist / timer);
                         Log.d("avg_speed", String.valueOf(avg_speed));
-//                        avg_speed = (sum_dist / timer) * 3.6; // km/h 로 변환
+                        avg_speed = (sum_dist / timer) * 3.6; // m/s -> km/h 로 변환
                         avg_speed = Math.round(avg_speed * 100) / 100.0;
-                        avg_speed *= 1000;
                         if (avg_speed < 0) {
                             avg_speed = 0;
                         }
                         Log.d("avg_speed", String.valueOf(avg_speed));
-                        // avg_speed = (avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
                     } else {
                         avg_speed = 0;
                     }
                     bef_lat = cur_lat;
                     bef_long = cur_long;
 
+//                    sum_dist = sum_dist / 1000.0;
+//                    sum_dist = Math.round(sum_dist * 100) / 100.0;
+
+                    double display_dist = 0;
+                    display_dist = sum_dist / 1000.0;
+                    display_dist = Math.round(display_dist * 100) / 100.0;
+
+
+                    Log.d("dist : ", String.valueOf(dist));
+                    Log.d("sum_dist : ", String.valueOf(sum_dist));
+                    Log.d("display_dist : ", String.valueOf(display_dist));
+
+                    bike_distance.setText(display_dist + " km");
+                    bike_avg_speed.setText(avg_speed + " km/h");
+
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); // 현재 좌표 지정
                     mMap.moveCamera(cameraUpdate); // 현재 좌표로 이동
                     // 폴리라인 생성
                     polyline = mMap.addPolyline(new PolylineOptions().color(0xFF6BC77C).width(30.0f).geodesic(true).add(cur_latLng).add(bef_latLng));
                     bef_latLng = cur_latLng;
-
-
                 }
             }
         }
@@ -1432,6 +1441,9 @@ public class MapFragment extends Fragment
         Date date = new Date(now);
         SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.dd HH:mm");
         f_time = sdfNow.format(date);
+
+        sum_dist = sum_dist / 1000.0;
+        sum_dist = Math.round(sum_dist * 100) / 100.0;
 
 
         Log.d("최종 라이딩 정보", "총 라이딩 시간 : " + timer + " 총 라이딩 거리 :" + sum_dist);
