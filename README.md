@@ -1,4 +1,6 @@
-# AOB(All Of Bike)
+#  AOB(All Of Bike)
+
+![AOB_BANNER](https://user-images.githubusercontent.com/85336456/135850127-ac2079de-d55b-4ad5-ace5-1167d800cb1f.jpg)
 
 ### 21.07.01 ~ 21.10.03
 
@@ -40,9 +42,24 @@ EL 동아리에서 진행된 **안드로이드** 졸업작품입니다.
 - minSdkVersion 16
 - targetSdkVersion 29
 
+## Tech Stack
+
+`Java`, `MVC`, `Retrofit`, `Google Map`, `Glide`, `Gson`, `SharedPreferences`, `REST API`, `Base64`
+
+## Database
+
+![Database](https://user-images.githubusercontent.com/85336456/135849296-88e69d63-cd16-47fb-8160-bb16a401ec2f.PNG)
+
+
 ## API & Open Source
 
 1. Open API of Korea Meteorological Administration : https://data.kma.go.kr/cmmn/main.do
 2. Google Maps SDK for Android
 3. Open API of Seoul Open Data Plaza : https://data.seoul.go.kr/
-4. Open Source of Agora : https://github.com/AgoraIO/Basic-Audio-Call/blob/master/One-to-One-Voice/Agora-Android-Voice-Tutorial-1to1/README.md
+4. Google Youtube Data API : https://developers.google.com/youtube/v3?hl=ko
+5. Open Source of Agora : https://github.com/AgoraIO/Basic-Audio-Call/blob/master/One-to-One-Voice/Agora-Android-Voice-Tutorial-1to1/README.md
+
+
+## Screenshot
+
+
