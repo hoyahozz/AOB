@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.dongyang.android.aob.R;
 import com.dongyang.android.aob.Repair.RepairFragment;
 import com.dongyang.android.aob.Safety.StreamingFragment;
+import com.dongyang.android.aob.Safety.tcp;
 import com.dongyang.android.aob.User.InfoActivity;
 import com.dongyang.android.aob.VoiceChat.VoiceChatFragment;
 import com.dongyang.android.aob.Map.MapFragment;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Intent tcp = new Intent(this, com.dongyang.android.aob.Safety.tcp.class);
+        startService(tcp);
 
         // 세션 영역에서 유저 이름 받아오기
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);

@@ -2,6 +2,7 @@ package com.dongyang.android.aob.Safety;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.IBinder;
@@ -42,6 +43,9 @@ public class tcp extends Service {
         ServerThread thread = new ServerThread();
         thread.start();
         Log.d("onCreate", "in onCreate");
+        SharedPreferences setting = getSharedPreferences("userInfo", MODE_PRIVATE);
+        id = setting.getString("id", "");
+        Log.d("iddddd",id);
         super.onCreate();
     }
 
@@ -50,19 +54,19 @@ public class tcp extends Service {
         //호출될때마다 실행
 
         button = null;
-        try {
-            //loginActivity에서 id 받아오기
-            if (!intent.getStringExtra("id").isEmpty()) {//값이 있을때
-                id = intent.getStringExtra("id");
-                Log.d("tcp-id", id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //loginActivity에서 id 받아오기
+//            if (!intent.getStringExtra("id").isEmpty()) {//값이 있을때
+//                id = intent.getStringExtra("id");
+//                Log.d("tcp-id", id);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         try {
             button = intent.getStringExtra("button"); //message에서 버튼을 눌렀을 때
-            //Log.d("onButton",button);
+            Log.d("onButton",button);
             if (button.equals("btnY")) {
                 //문자 보내기
                 gpsTracker = new GpsTracker(getApplicationContext());
@@ -84,7 +88,7 @@ public class tcp extends Service {
                             Log.d("Array", String.valueOf(jsonObject));
                             boolean success = jsonObject.getBoolean("success");
                             if (success) {
-                                emCol = jsonObject.getString("emCol1");
+                                emCol = jsonObject.getString("sos");
                                 String sendMessage = "https://www.google.com/maps/place/" + latitude + "," + longitude;
                                 SmsManager sms = SmsManager.getDefault();
                                 sms.sendTextMessage(emCol, null, sendMessage, null, null);

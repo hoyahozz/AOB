@@ -39,7 +39,6 @@ public class InfoMeasurementDialog extends Dialog {
 
         TextView tv_date, tv_dist, tv_speed, tv_time, tv_kcal;
         requestWindowFeature(Window.FEATURE_NO_TITLE); // 타이틀 없애기
-        setCancelable(false); // 외부 화면 터치, 뒤로가기를 눌러도 다어얼로그 종료 X
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // 투명 배경화면으로
         setContentView(R.layout.dialog_info_measurement);
 

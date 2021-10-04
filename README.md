@@ -1,4 +1,4 @@
-# All Of Bike
+# AOB(All Of Bike)
 
 ### 21.07.01 ~ 21.10.03
 
@@ -8,7 +8,7 @@ EL 동아리에서 진행된 **안드로이드** 졸업작품입니다.
 
 ## Introduction
 
-**This is created to provide convenience to cyclists**
+**This is created to provide convenience to cyclists.**
 
 1. It provides users with weather at that location in real time.
 2. It uses map services to provide a lot of information to users.

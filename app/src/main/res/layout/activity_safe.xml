@@ -132,4 +132,12 @@
                         긴급한 상황으로 판단해 자동으로 긴급 연락을 합니다."
         android:textColor="#049b50" />
 
+
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#4CAF50"
+        android:textSize="30sp" />
 </LinearLayout>

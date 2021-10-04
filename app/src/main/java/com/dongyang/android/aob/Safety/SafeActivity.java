@@ -11,7 +11,9 @@ import android.widget.Button;
 
 
 public class SafeActivity extends AppCompatActivity {
+
     int flag=0;//사용자가 버튼을 눌렀는지 확인하는 플래그변수
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

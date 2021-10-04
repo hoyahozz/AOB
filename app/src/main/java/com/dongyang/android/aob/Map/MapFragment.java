@@ -1253,7 +1253,7 @@ public class MapFragment extends Fragment
         Thread checkUpdate = new Thread() {
             public void run() {
                 // ip 입력
-                String newip = "172.20.10.3";
+                String newip = "172.20.10.6";
                 // String newip = "192.168.0.4";
 
                 // 서버 접속
@@ -1261,7 +1261,7 @@ public class MapFragment extends Fragment
                     socket = new Socket(newip, port);
                     Log.w("서버 접속됨", "서버 접속됨");
                 } catch (IOException e1) {
-                    Log.w("서버접속못함", "서버접속못함");
+                    Log.w("서버 접속 못함", "서버 접속 못함");
                     e1.printStackTrace();
                 }
 
@@ -1451,12 +1451,12 @@ public class MapFragment extends Fragment
         Log.d("최종 라이딩 정보", "종료시간 : " + f_time + " 종료지점 경도 :" + f_lat + " 종료지점 위도 : " + f_long);
 
 
-        // 소켓 통신
-        // String measure_data = kcal + " " + sum_dist + " " + avg_speed + " " + timer; // 파이썬 소켓통신으로 보낼 데이터
-        // connect("Measure " + String.valueOf(measure_data));
-
         int g_timer = (int) timer / 1000;
         double kcal = MeasureCalorie(g_timer, avg_speed);
+
+        // 소켓 통신
+        String measure_data = kcal + " " + sum_dist + " " + avg_speed + " " + timer; // 파이썬 소켓통신으로 보낼 데이터
+        // connect("Measure " + String.valueOf(measure_data));
 
         Log.d("최종 라이딩 정보", "칼로리 : " + String.valueOf(kcal));
 
