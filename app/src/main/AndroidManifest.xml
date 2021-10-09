@@ -56,12 +56,18 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false"/>
-        <activity android:name=".User.UserChangeActivity"></activity>
-        <activity android:name=".User.InfoActivity" />
-        <activity android:name=".Safety.SafeActivity" />
-        <activity android:name=".User.FavoriteActivity" />
-        <activity android:name=".Repair.YoutubeActivity" />
-        <activity android:name=".Repair.YoutubePlayerActivity" />
+        <activity android:name=".User.UserChangeActivity"
+            android:screenOrientation="portrait"> </activity>
+        <activity android:name=".User.InfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Safety.SafeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".User.FavoriteActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Repair.YoutubeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Repair.YoutubePlayerActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -69,13 +75,20 @@
 
         <activity
             android:name=".Main.MainActivity"
-            android:label="@string/title_activity_main" />
-        <activity android:name=".Introduction.Activity.FindActivity" />
-        <activity android:name=".Introduction.Activity.RegisterActivity" />
-        <activity android:name=".Introduction.Activity.LoginActivity" />
-        <activity android:name=".VoiceChat.ChatActivity" />
-        <activity android:name=".VoiceChat.ChatStartActivity" />
-        <activity android:name=".SplashActivity">
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Introduction.Activity.FindActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Introduction.Activity.RegisterActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Introduction.Activity.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".VoiceChat.ChatActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".VoiceChat.ChatStartActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

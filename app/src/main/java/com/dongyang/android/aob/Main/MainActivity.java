@@ -327,9 +327,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        //서비스 종료
+        Intent i = new Intent(this, tcp.class);
+        stopService(i);
+        Log.d(TAG, "서비스 중지");
+
         super.onDestroy();
         Log.d(TAG, "onDestroy ON");
     }
+
 
 
     // 권한 체크
