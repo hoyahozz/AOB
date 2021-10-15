@@ -1,6 +1,6 @@
 #  AOB(All Of Bike)
 
-![AOB_BANNER](https://user-images.githubusercontent.com/85336456/135850127-ac2079de-d55b-4ad5-ace5-1167d800cb1f.jpg)
+![AOB_LOGO](https://user-images.githubusercontent.com/85336456/137491369-5d665f00-0836-4db9-bda8-f659a5bc5e41.png)
 
 ### 21.07.01 ~ 21.10.03
 
@@ -33,7 +33,7 @@ EL 동아리에서 진행된 **안드로이드** 졸업작품입니다.
 ## Made With
 
 - Android Studio - 4.1.2
-- MySQL - 5.7
+- MariaDB - 10.3.29
 - Apache Server - 2.4.38
 - PHP - 7.3.27
 
@@ -50,6 +50,10 @@ EL 동아리에서 진행된 **안드로이드** 졸업작품입니다.
 
 ![Database](https://user-images.githubusercontent.com/85336456/135849296-88e69d63-cd16-47fb-8160-bb16a401ec2f.PNG)
 
+## System
+
+![설계도](https://user-images.githubusercontent.com/85336456/137491821-09ca61cd-c9ff-48ad-a2bf-8880fd2affde.png)
+
 
 ## API & Open Source
 
@@ -62,4 +66,37 @@ EL 동아리에서 진행된 **안드로이드** 졸업작품입니다.
 
 ## Screenshot
 
+### Login & Register
+
+![Login   Register](https://user-images.githubusercontent.com/85336456/137500268-190dd9aa-2d4e-47f1-b705-8a6192f8056f.png)
+
+<br/>
+
+### Home & My Info
+
+![My Info](https://user-images.githubusercontent.com/85336456/137498553-08744d25-e7ea-4f61-b210-ac7ee46d1231.png)
+
+<br/>
+
+### Map
+
+![Map](https://user-images.githubusercontent.com/85336456/137499165-d2707ddc-bae7-4c78-bc89-d271ebb9d88d.png)
+
+<br/>
+
+### Voice Chat
+
+![Voice Chat](https://user-images.githubusercontent.com/85336456/137506136-b5fa1a60-a823-419b-8624-8cefc363b779.png)
+
+<br/>
+
+### Self Repair
+
+![Deep Running](https://user-images.githubusercontent.com/85336456/137506162-fcc14bac-049a-4ad0-a08a-d109f706cd42.png)
+
+<br/>
+
+### Rear streaming & Fall detection
+
+![Safety](https://user-images.githubusercontent.com/85336456/137506190-cbc753fb-202d-43a2-b91b-5687c2c86968.png)
 
