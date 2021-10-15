@@ -110,5 +110,15 @@ public class StreamingFragment extends Fragment {
             return super.shouldOverrideUrlLoading(view, url);
         }
     }
+
+    // 프래그먼트 종료시 세션을 초기화하는 url 호출 - 10/15 박현민
+    @Override
+    public void onDestroyView() {
+        // Log.d(TAG, "onDestroyView");
+
+        web.loadUrl("http://192.168.0.9:5001/end");
+        super.onDestroyView();
+    }
+
 }
 

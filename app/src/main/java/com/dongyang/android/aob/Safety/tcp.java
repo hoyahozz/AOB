@@ -160,6 +160,8 @@ public class tcp extends Service {
             Log.d(TAG, "destroy socket.close()");
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
         Log.d(TAG, "tcp onDestroy");
         super.onDestroy();
@@ -252,8 +254,9 @@ public class tcp extends Service {
                 }
             }//while
         }
-
     }
+
+
 
     class OutputPrint extends Thread {
 
@@ -284,4 +287,6 @@ public class tcp extends Service {
 
         }
     }
+
+
 }

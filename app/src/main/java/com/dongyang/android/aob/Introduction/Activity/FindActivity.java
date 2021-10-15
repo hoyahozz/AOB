@@ -75,6 +75,7 @@ public class FindActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         switch (fragment){
+
             case 1:
                 // 아이디 찾기 프래그먼트 호출
                 IdFindFragment idFindFragment = new IdFindFragment();

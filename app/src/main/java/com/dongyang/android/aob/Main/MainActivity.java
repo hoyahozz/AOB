@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         repairFragment.setArguments(bundle);
         streamingFragment.setArguments(bundle);
 
+        // streaming 프래그먼트 벗어날 때 hide가 아니라 remove (10.15 박현민)
         main_bnv.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -163,7 +164,9 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (fragmentManager.findFragmentByTag("streaming") != null) {
-                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("streaming")).commit();
+                            //fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
                         }
 
                         return true;
@@ -190,7 +193,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (fragmentManager.findFragmentByTag("streaming") != null) {
-                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("streaming")).commit();
+                            //fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
                         }
 
                         return true;
@@ -217,7 +221,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (fragmentManager.findFragmentByTag("streaming") != null) {
-                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("streaming")).commit();
+                            //fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
                         }
 
                         return true;
@@ -244,7 +249,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (fragmentManager.findFragmentByTag("streaming") != null) {
-                            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
+                            fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("streaming")).commit();
+                            //fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("streaming")).commit();
                         }
 
                         return true;
@@ -253,24 +259,31 @@ public class MainActivity extends AppCompatActivity {
 
                         if (fragmentManager.findFragmentByTag("streaming") != null) {
                             // 프래그먼트가 존재한다면 보여주기
+                            Log.d("fstream", "create");
                             fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("streaming")).commit();
                         } else {
+                            Log.d("fstream", "streaming -> streaming");
                             fragmentManager.beginTransaction().add(R.id.main_container, streamingFragment, "streaming").commit();
+
                         }
 
                         if (fragmentManager.findFragmentByTag("riding") != null) {
+                            Log.d("fstream", "riding -> streaming");
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("riding")).commit();
                         }
 
                         if (fragmentManager.findFragmentByTag("voiceChat") != null) {
+                            Log.d("fstream", "voice -> streaming");
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("voiceChat")).commit();
                         }
 
                         if (fragmentManager.findFragmentByTag("home") != null) {
+                            Log.d("fstream", "home -> streaming");
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                         }
 
                         if (fragmentManager.findFragmentByTag("repair") != null) {
+                            Log.d("fstream", "repair -> streaming");
                             fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("repair")).commit();
                         }
 
@@ -281,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
     }
 
