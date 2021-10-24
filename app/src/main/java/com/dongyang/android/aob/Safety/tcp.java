@@ -156,11 +156,12 @@ public class tcp extends Service {
         thread.interrupt();//스레드 종료를 위해 인터럽트 발생
         try {
             socket.close();//readline에 있을때 종료하기위해
-            server.close();//accept에 있을때 종료하기위해
-            Log.d(TAG, "destroy socket.close()");
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+            server.close();//accept에 있을때 종료하기위해
+        }catch (Exception e){
             e.printStackTrace();
         }
         Log.d(TAG, "tcp onDestroy");
@@ -210,49 +211,50 @@ public class tcp extends Service {
             int port = 9001;
             try {
                 server = new ServerSocket(port);
+                while (true) {
+                    Log.d("waiting", "waiting accept");
+                    try {
+                        if(Thread.interrupted()){
+                            Log.d(TAG, "thread interrupted");
+                            break;
+                        }
+                        socket = server.accept();//onDestroy시 서버소켓을 닫아서 exception나게 하고 thread interrupt 확인으로 넘어감
+
+                        Log.d(TAG, "socket = " + String.valueOf(socket));
+                        InputStream input = null;
+                        input = socket.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+                        String readValue = reader.readLine();
+                        Log.d(TAG, "socket read : " + readValue);
+                        if (readValue != null) {
+                            if (readValue.equals("fallen")) {//넘어졌을때
+                                Intent intent = new Intent(getApplicationContext(), SafeActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                        Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                                        Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                //Thread.sleep(10000);//10초 기다림
+                            }
+                        }
+                        Thread.sleep(1);//인터럽트 확인을 위해 잠깐 멈춰야됨
+
+
+                    } catch (IOException ioException) {//SocketException 포함
+                        ioException.printStackTrace();
+
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "serverthraed interrupted");
+                        break;
+                    }
+                }//while
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
 
-            while (true) {
-                Log.d("waiting", "waiting accept");
-                try {
-                    if(Thread.interrupted()){
-                        Log.d(TAG, "thread interrupted");
-                        break;
-                    }
-                    socket = server.accept();//onDestroy시 서버소켓을 닫아서 exception나게 하고 thread interrupt 확인으로 넘어감
 
-                    Log.d(TAG, "socket = " + String.valueOf(socket));
-                    InputStream input = null;
-                    input = socket.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-                    String readValue = reader.readLine();
-                    Log.d(TAG, "socket read : " + readValue);
-                    if (readValue != null) {
-                        if (readValue.equals("fallen")) {//넘어졌을때
-                            Intent intent = new Intent(getApplicationContext(), SafeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                                    Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            //Thread.sleep(10000);//10초 기다림
-                        }
-                    }
-                    Thread.sleep(1);//인터럽트 확인을 위해 잠깐 멈춰야됨
-
-
-                } catch (IOException ioException) {//SocketException 포함
-                    ioException.printStackTrace();
-
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "serverthraed interrupted");
-                    break;
-                }
-            }//while
         }
     }
 
@@ -274,11 +276,11 @@ public class tcp extends Service {
                     Log.d(TAG, "outsocket is not null");
                     PrintWriter writer = new PrintWriter(out, true);
                     writer.println(button);
-                    socket.close();
                 }
                 else{
                     Log.d(TAG, "outsocket is null");
                 }
+                socket.close();
                 //Log.d("button",button);
             } catch (Exception e) {
                 e.printStackTrace();

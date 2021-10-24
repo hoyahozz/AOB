@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import com.dongyang.android.aob.Introduction.UserProfileDialog;
 import com.dongyang.android.aob.LoadingDialog;
 import com.dongyang.android.aob.Main.MainActivity;
 import com.dongyang.android.aob.R;
+import com.dongyang.android.aob.Safety.tcp;
 import com.dongyang.android.aob.User.Service.ChangeService;
 
 import java.io.File;
@@ -134,6 +136,7 @@ public class UserChangeActivity extends AppCompatActivity {
                 dialBtn.setTypeface(typeface);
                 dialBtn2.setTypeface(typeface);
                 dialBtn2.setTextColor(Color.BLACK);
+
             }
         });
 
@@ -233,6 +236,10 @@ public class UserChangeActivity extends AppCompatActivity {
 
         editor.clear();
         editor.commit();
+        // 서비스 종료 (10/24)
+        Intent i = new Intent(UserChangeActivity.this, tcp.class);
+        stopService(i);
+
         Intent intent = new Intent(UserChangeActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // 상위 액티비티 모두 종료
         startActivity(intent);
