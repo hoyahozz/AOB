@@ -433,8 +433,10 @@ public class MapFragment extends Fragment
                 if (seoulBike == 0) { // 따릉이 보기 버튼 꺼져있을 때 누르면
                     seoulBike_controller.setTextColor(0xFF46b95b);
                     getBikeAPI();
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(SEOUL_LOCATION, 15);
-                    mMap.moveCamera(cameraUpdate);
+                    // mMap.animateCamera(CameraUpdateFactory.zoomOut());
+
+//                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(SEOUL_LOCATION, 15);
+//                    mMap.moveCamera(cameraUpdate);
                     seoulBike = 1;
                 } else { // 따릉이 보기 버튼 켜져있을 때 누르면
                     mClusterManager.clearItems();
