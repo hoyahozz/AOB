@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        Intent tcp = new Intent(this, com.dongyang.android.aob.Safety.tcp.class);
-        startService(tcp);
 
         // 세션 영역에서 유저 이름 받아오기
         pref = getSharedPreferences("userInfo", MODE_PRIVATE);
@@ -377,6 +375,16 @@ public class MainActivity extends AppCompatActivity {
 //            permission.requestPermission();
 //        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+    @Override
+    protected void onResume() {
+        Intent tcp = new Intent(this, com.dongyang.android.aob.Safety.tcp.class);
+        tcp.putExtra("onResume", true);
+        startService(tcp);
+        Log.d(TAG, "onResume");
+        super.onResume();
     }
 
 

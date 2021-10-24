@@ -50,7 +50,7 @@ public class tcp extends Service {
         //생성되었을때 실행
         thread = new ServerThread();
         thread.start();
-        Log.d("onCreate", "in onCreate");
+        Log.d(TAG, "in onCreate");
         SharedPreferences setting = getSharedPreferences("userInfo", MODE_PRIVATE);
         id = setting.getString("id", "");
         Log.d("iddddd",id);
@@ -64,17 +64,15 @@ public class tcp extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //호출될때마다 실행
+        boolean onResume = intent.getBooleanExtra("onResume",false);
+        if(onResume == true){
+            Log.d(TAG, "Mainactivity onResume -> startService");
+            return super.onStartCommand(intent, flags, startId);
+        }else{
+            Log.d(TAG, "SafeActivity -> startService");
+        }
 
-        button = null;
-//        try {
-//            //loginActivity에서 id 받아오기
-//            if (!intent.getStringExtra("id").isEmpty()) {//값이 있을때
-//                id = intent.getStringExtra("id");
-//                Log.d("tcp-id", id);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        button=null;
 
         try {
             button = intent.getStringExtra("button"); //message에서 버튼을 눌렀을 때
